@@ -18,7 +18,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     
     @Override
     public List<Log> getRecentLogs(int limit) {
-        return this.list(null);
+        return this.list();
     }
     
     @Override
