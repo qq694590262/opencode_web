@@ -1,0 +1,125 @@
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS opencode DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE opencode;
+
+-- 用户表
+CREATE TABLE IF NOT EXISTS sys_user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    department VARCHAR(50),
+    avatar VARCHAR(255),
+    role VARCHAR(20) DEFAULT 'USER',
+    status INT DEFAULT 1 COMMENT '1:正常 0:禁用',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0 COMMENT '0:未删除 1:已删除'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 角色表
+CREATE TABLE IF NOT EXISTS sys_role (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    user_count INT DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 项目表
+CREATE TABLE IF NOT EXISTS sys_project (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    icon VARCHAR(50),
+    color VARCHAR(20),
+    member_count INT DEFAULT 0,
+    start_date DATETIME,
+    progress INT DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'active',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 任务表
+CREATE TABLE IF NOT EXISTS sys_task (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    priority VARCHAR(20) DEFAULT 'medium',
+    status VARCHAR(20) DEFAULT 'todo',
+    assignee VARCHAR(50),
+    project_id BIGINT,
+    due_date DATETIME,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 文档表
+CREATE TABLE IF NOT EXISTS sys_document (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    icon VARCHAR(50),
+    size VARCHAR(20),
+    type VARCHAR(20),
+    url VARCHAR(255),
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 日志表
+CREATE TABLE IF NOT EXISTS sys_log (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    operation VARCHAR(100),
+    ip VARCHAR(50),
+    method VARCHAR(50),
+    params TEXT,
+    status INT DEFAULT 1,
+    error_msg TEXT,
+    duration BIGINT,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 知识库分类表
+CREATE TABLE IF NOT EXISTS sys_wiki_category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(255),
+    icon VARCHAR(50),
+    article_count INT DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 设置表
+CREATE TABLE IF NOT EXISTS sys_settings (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    dark_mode TINYINT DEFAULT 0,
+    email_notify TINYINT DEFAULT 1,
+    desktop_notify TINYINT DEFAULT 0,
+    language VARCHAR(20) DEFAULT 'zh-CN',
+    timezone VARCHAR(50) DEFAULT 'Asia/Shanghai',
+    bio VARCHAR(500),
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 插入默认管理员用户
+INSERT INTO sys_user (username, password, name, email, role, status) 
+VALUES ('admin', 'password', '管理员', 'admin@company.com', 'ADMIN', 1)
+ON DUPLICATE KEY UPDATE name = '管理员';
