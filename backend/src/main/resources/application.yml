@@ -28,6 +28,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-jwt:
-  secret: opencode-secret-key-2024
-  expiration: 86400000
+# jwt configuration disabled for startup stability
+# jwt:
+#   secret: opencode-secret-key-2024
+#   expiration: 86400000
