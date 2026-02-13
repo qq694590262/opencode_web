@@ -249,8 +249,10 @@ export default {
   background: #fff;
   border-radius: 16px;
   padding: 24px;
-  width: 400px;
+  width: 500px;
   max-width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .modal h3 {
@@ -273,6 +275,7 @@ export default {
 .form-group input,
 .form-group select {
   width: 100%;
+  box-sizing: border-box;
   padding: 10px 12px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;

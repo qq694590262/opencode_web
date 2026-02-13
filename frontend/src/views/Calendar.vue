@@ -295,11 +295,11 @@ export default {
 .btn-delete { padding: 4px 8px; border: none; border-radius: 4px; background: #fee2e2; color: #dc2626; font-size: 11px; cursor: pointer; }
 
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: #fff; border-radius: 16px; padding: 24px; width: 400px; max-width: 90%; }
+.modal { background: #fff; border-radius: 16px; padding: 24px; width: 500px; max-width: 90%; max-height: 85vh; overflow-y: auto; }
 .modal h3 { margin: 0 0 20px 0; font-size: 18px; color: #1e293b; }
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; color: #64748b; margin-bottom: 6px; }
-.form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
+.form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
 .form-group input:focus, .form-group select:focus { border-color: #0ea5e9; }
 .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
 .btn-cancel { padding: 10px 20px; border: none; border-radius: 8px; background: #f1f5f9; color: #475569; font-size: 14px; cursor: pointer; }
