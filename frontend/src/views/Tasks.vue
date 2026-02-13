@@ -165,8 +165,10 @@ const filteredColumns = computed(() => {
 const loadTasks = async () => {
   try {
     loading.value = true
-    const data = await taskApi.getAll()
-    tasks.value = Array.isArray(data) ? data : []
+    const res = await taskApi.getAll()
+    if (res.code === 200) {
+      tasks.value = res.data || []
+    }
   } catch (error) {
     console.error('加载任务失败:', error)
     alert('加载任务失败: ' + (error.message || '未知错误'))
@@ -183,8 +185,10 @@ const handleFilter = async () => {
   if (statusFilter.value) {
     try {
       loading.value = true
-      const data = await taskApi.getByStatus(statusFilter.value)
-      tasks.value = Array.isArray(data) ? data : []
+      const res = await taskApi.getByStatus(statusFilter.value)
+      if (res.code === 200) {
+        tasks.value = res.data || []
+      }
     } catch (error) {
       console.error('按状态加载任务失败:', error)
       alert('加载失败: ' + (error.message || '未知错误'))

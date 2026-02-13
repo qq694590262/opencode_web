@@ -83,8 +83,10 @@ const filteredRoles = computed(() => {
 const loadRoles = async () => {
   try {
     loading.value = true
-    const data = await roleApi.getAll()
-    roles.value = Array.isArray(data) ? data : []
+    const res = await roleApi.getAll()
+    if (res.code === 200) {
+      roles.value = res.data || []
+    }
   } catch (error) {
     console.error('加载角色失败:', error)
     alert('加载角色失败: ' + (error.message || '未知错误'))

@@ -132,8 +132,10 @@ const filteredProjects = computed(() => {
 const loadProjects = async () => {
   try {
     loading.value = true
-    const data = await projectApi.getAll()
-    projects.value = Array.isArray(data) ? data : []
+    const res = await projectApi.getAll()
+    if (res.code === 200) {
+      projects.value = res.data || []
+    }
   } catch (error) {
     console.error('加载项目失败:', error)
     alert('加载项目失败: ' + (error.message || '未知错误'))
