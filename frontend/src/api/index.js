@@ -97,3 +97,20 @@ export const dashboardApi = {
   getQuickLinks: () => request('/dashboard/quick-links'),
   getCharts: () => request('/dashboard/charts'),
 }
+
+export const calendarApi = {
+  getAll: () => request('/calendar'),
+  getByUser: () => request('/calendar/user'),
+  getById: (id) => request(`/calendar/${id}`),
+  create: (data) => request('/calendar', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => request(`/calendar/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/calendar/${id}`, { method: 'DELETE' }),
+}
+
+export const reportApi = {
+  getAll: () => request('/reports'),
+  getById: (id) => request(`/reports/${id}`),
+  create: (data) => request('/reports', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => request(`/reports/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/reports/${id}`, { method: 'DELETE' }),
+}

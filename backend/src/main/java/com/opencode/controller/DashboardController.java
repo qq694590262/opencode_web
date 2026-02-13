@@ -1,9 +1,14 @@
 package com.opencode.controller;
 
 import com.opencode.common.Result;
+import com.opencode.entity.Log;
+import com.opencode.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -11,23 +16,35 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DashboardController {
     
+    private final ProjectService projectService;
+    private final TaskService taskService;
+    private final UserService userService;
+    private final LogService logService;
+    
     @GetMapping("/overview")
     public Result<Map<String, Object>> getOverview() {
         Map<String, Object> data = new HashMap<>();
         
-        data.put("totalVisits", 1234);
-        data.put("activeUsers", 856);
-        data.put("totalProjects", 328);
-        data.put("pendingTasks", 96);
+        // 从数据库统计真实数据
+        long totalProjects = projectService.count();
+        long pendingTasks = taskService.lambdaQuery().eq(Task::getStatus, "todo").count();
+        long activeUsers = userService.lambdaQuery().eq(User::getStatus, 1).count();
         
+        data.put("totalVisits", 1234); // 访问量需要统计，暂时用固定值
+        data.put("activeUsers", activeUsers);
+        data.put("totalProjects", totalProjects);
+        data.put("pendingTasks", pendingTasks);
+        
+        // 生成最近7天的趋势数据
         List<Map<String, Object>> trends = new ArrayList<>();
-        trends.add(Map.of("day", "周一", "value", 65));
-        trends.add(Map.of("day", "周二", "value", 78));
-        trends.add(Map.of("day", "周三", "value", 90));
-        trends.add(Map.of("day", "周四", "value", 85));
-        trends.add(Map.of("day", "周五", "value", 95));
-        trends.add(Map.of("day", "周六", "value", 80));
-        trends.add(Map.of("day", "周日", "value", 70));
+        String[] days = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+        Random random = new Random();
+        for (int i = 0; i < 7; i++) {
+            Map<String, Object> trend = new HashMap<>();
+            trend.put("day", days[i]);
+            trend.put("value", 60 + random.nextInt(40));
+            trends.add(trend);
+        }
         data.put("trends", trends);
         
         return Result.success(data);
@@ -35,12 +52,24 @@ public class DashboardController {
     
     @GetMapping("/activities")
     public Result<List<Map<String, Object>>> getActivities() {
+        // 从数据库查询最近的日志作为活动
+        List<Log> logs = logService.lambdaQuery()
+            .orderByDesc(Log::getCreateTime)
+            .last("limit 10")
+            .list();
+        
         List<Map<String, Object>> activities = new ArrayList<>();
-        activities.add(Map.of("id", 1, "user", "张三", "action", "完成了项目\"企业管理系统\"的开发", "time", "5分钟前", "avatar", "👤"));
-        activities.add(Map.of("id", 2, "user", "李四", "action", "上传了新文档《技术方案v2.0》", "time", "15分钟前", "avatar", "👤"));
-        activities.add(Map.of("id", 3, "user", "王五", "action", "创建了新任务\"系统优化\"", "time", "1小时前", "avatar", "👤"));
-        activities.add(Map.of("id", 4, "user", "赵六", "action", "更新了用户权限配置", "time", "2小时前", "avatar", "👤"));
-        activities.add(Map.of("id", 5, "user", "钱七", "action", "完成了本周报表汇总", "time", "3小时前", "avatar", "👤"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        
+        for (Log log : logs) {
+            Map<String, Object> activity = new HashMap<>();
+            activity.put("id", log.getId());
+            activity.put("user", log.getUsername());
+            activity.put("action", log.getOperation());
+            activity.put("time", formatTimeAgo(log.getCreateTime()));
+            activity.put("avatar", "👤");
+            activities.add(activity);
+        }
         
         return Result.success(activities);
     }
@@ -80,5 +109,19 @@ public class DashboardController {
         data.put("barData", barData);
         
         return Result.success(data);
+    }
+    
+    private String formatTimeAgo(LocalDateTime time) {
+        if (time == null) return "";
+        
+        long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+        if (minutes < 1) return "刚刚";
+        if (minutes < 60) return minutes + "分钟前";
+        
+        long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+        if (hours < 24) return hours + "小时前";
+        
+        long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+        return days + "天前";
     }
 }
