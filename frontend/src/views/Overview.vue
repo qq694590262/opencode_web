@@ -7,20 +7,20 @@
     
     <div class="stats-row">
       <div class="stat-item">
-        <span class="stat-num">12,847</span>
+        <span class="stat-num">{{ stats.totalVisits || 0 }}</span>
         <span class="stat-desc">总访问</span>
       </div>
       <div class="stat-item">
-        <span class="stat-num">2,341</span>
-        <span class="stat-desc">新增用户</span>
+        <span class="stat-num">{{ stats.activeUsers || 0 }}</span>
+        <span class="stat-desc">活跃用户</span>
       </div>
       <div class="stat-item">
-        <span class="stat-num">¥ 128.5K</span>
-        <span class="stat-desc">营业收入</span>
+        <span class="stat-num">{{ stats.totalProjects || 0 }}</span>
+        <span class="stat-desc">项目总数</span>
       </div>
       <div class="stat-item">
-        <span class="stat-num">94.2%</span>
-        <span class="stat-desc">用户满意度</span>
+        <span class="stat-num">{{ stats.pendingTasks || 0 }}</span>
+        <span class="stat-desc">待办事项</span>
       </div>
     </div>
 
@@ -28,8 +28,8 @@
       <h3>数据趋势图</h3>
       <div class="chart-area">
         <div class="chart-line">
-          <div class="line-item" v-for="i in 7" :key="i" :style="{ '--delay': i * 0.1 + 's' }">
-            <div class="line-bar" :style="{ height: Math.random() * 80 + 20 + '%' }"></div>
+          <div class="line-item" v-for="(item, index) in trends" :key="index" :style="{ '--delay': index * 0.1 + 's' }">
+            <div class="line-bar" :style="{ height: item.value + '%' }"></div>
           </div>
         </div>
       </div>
@@ -38,8 +38,29 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
+import { dashboardApi } from '../api'
+
 export default {
-  name: 'Overview'
+  name: 'Overview',
+  setup() {
+    const stats = ref({})
+    const trends = ref([])
+
+    onMounted(async () => {
+      try {
+        const res = await dashboardApi.getOverview()
+        if (res.code === 200) {
+          stats.value = res.data || {}
+          trends.value = res.data?.trends || []
+        }
+      } catch (error) {
+        console.error('获取数据概览失败:', error)
+      }
+    })
+
+    return { stats, trends }
+  }
 }
 </script>
 

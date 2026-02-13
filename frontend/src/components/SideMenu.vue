@@ -7,7 +7,7 @@
           :class="{ active: isActive(item) }"
           @click="handleClick(item)"
         >
-          <img v-if="item.icon" :src="item.icon" class="icon" />
+          <span class="icon">{{ item.icon }}</span>
           <span class="label">{{ item.label }}</span>
           <span v-if="item.children && item.children.length" class="caret" :class="{ expanded: isExpanded(item) }">▶</span>
         </div>
@@ -19,19 +19,19 @@
               :class="{ active: isActive(child) }"
               @click="handleClick(child)"
             >
-              <img v-if="child.icon" :src="child.icon" class="icon" />
+              <span class="icon">{{ child.icon }}</span>
               <span class="label">{{ child.label }}</span>
               <span v-if="child.children && child.children.length" class="caret" :class="{ expanded: isExpanded(child) }">▶</span>
             </div>
             
             <ul v-if="child.children && child.children.length" class="sub-menu" v-show="isExpanded(child)">
-              <li v-for="grand in child.children" :key="grand.id" class="menu-item sub-item">
+              <li v-for="grand in item.children" :key="grand.id" class="menu-item sub-item">
                 <div 
                   class="menu-entry sub-entry" 
                   :class="{ active: isActive(grand) }"
                   @click="handleClick(grand)"
                 >
-                  <img v-if="grand.icon" :src="grand.icon" class="icon" />
+                  <span class="icon">{{ grand.icon }}</span>
                   <span class="label">{{ grand.label }}</span>
                 </div>
               </li>
@@ -117,9 +117,9 @@ export default {
 }
 
 .icon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
 }
 
 .label {

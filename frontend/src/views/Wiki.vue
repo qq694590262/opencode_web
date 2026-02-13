@@ -6,29 +6,47 @@
     </div>
 
     <div class="wiki-categories">
-      <div class="category-card" v-for="cat in categories" :key="cat.id">
-        <div class="cat-icon">{{ cat.icon }}</div>
+      <div class="category-card" v-for="cat in categories" :key="cat.id" @click="editCategory(cat)">
+        <div class="cat-icon">{{ cat.icon || '📄' }}</div>
         <h4>{{ cat.name }}</h4>
-        <p>{{ cat.desc }}</p>
-        <span class="cat-count">{{ cat.articles }} 篇文章</span>
+        <p>{{ cat.description }}</p>
+        <span class="cat-count">{{ cat.articleCount || 0 }} 篇文章</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
+import { wikiApi } from '../api'
+
 export default {
   name: 'Wiki',
   setup() {
-    const categories = [
-      { id: 1, icon: '🚀', name: '新手入门', desc: '快速上手指南', articles: 12 },
-      { id: 2, icon: '💻', name: '技术文档', desc: '开发技术文档', articles: 28 },
-      { id: 3, icon: '📖', name: '产品知识', desc: '产品功能介绍', articles: 15 },
-      { id: 4, icon: '🔧', name: '运维指南', desc: '系统运维手册', articles: 8 },
-      { id: 5, icon: '📋', name: '常见问题', desc: 'FAQ 汇总', articles: 20 },
-      { id: 6, icon: '💡', name: '最佳实践', desc: '经验与技巧', articles: 16 }
-    ]
-    return { categories }
+    const categories = ref([])
+
+    const loadCategories = async () => {
+      try {
+        const res = await wikiApi.getCategories()
+        if (res.code === 200) {
+          categories.value = res.data || []
+        }
+      } catch (error) {
+        console.error('获取知识库分类失败:', error)
+      }
+    }
+
+    const editCategory = (cat) => {
+      console.log('编辑分类:', cat)
+      // 可以打开编辑弹窗或跳转到详情页
+    }
+
+    onMounted(loadCategories)
+
+    return {
+      categories,
+      editCategory
+    }
   }
 }
 </script>
@@ -46,6 +64,7 @@ export default {
 .category-card {
   background: #fff; border-radius: 16px; padding: 24px;
   text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: all 0.3s;
+  cursor: pointer;
 }
 .category-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
 

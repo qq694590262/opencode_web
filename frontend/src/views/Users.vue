@@ -6,8 +6,8 @@
     </div>
 
     <div class="toolbar">
-      <input type="text" placeholder="搜索用户..." class="search-input" />
-      <button class="btn-primary">+ 新增用户</button>
+      <input type="text" v-model="searchQuery" placeholder="搜索用户..." class="search-input" @input="handleSearch" />
+      <button class="btn-primary" @click="showAddModal = true">+ 新增用户</button>
     </div>
 
     <div class="table-card">
@@ -23,40 +23,177 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" :key="user.id">
+          <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.id }}</td>
             <td>
               <div class="user-cell">
-                <span class="avatar">{{ user.avatar }}</span>
-                {{ user.name }}
+                <span class="avatar">👤</span>
+                {{ user.name || user.username }}
               </div>
             </td>
             <td>{{ user.email }}</td>
-            <td><span class="role-tag">{{ user.role }}</span></td>
-            <td><span class="status-tag" :class="user.status">{{ user.statusText }}</span></td>
+            <td><span class="role-tag">{{ user.role || '用户' }}</span></td>
             <td>
-              <button class="action-btn">编辑</button>
-              <button class="action-btn danger">删除</button>
+              <span class="status-tag" :class="user.status === 1 ? 'active' : 'inactive'">
+                {{ user.status === 1 ? '正常' : '禁用' }}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" @click="editUser(user)">编辑</button>
+              <button class="action-btn danger" @click="deleteUser(user.id)">删除</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- 添加/编辑用户弹窗 -->
+    <div v-if="showAddModal || showEditModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal">
+        <h3>{{ showEditModal ? '编辑用户' : '新增用户' }}</h3>
+        <form @submit.prevent="saveUser">
+          <div class="form-group">
+            <label>用户名</label>
+            <input v-model="formData.username" required />
+          </div>
+          <div class="form-group">
+            <label>姓名</label>
+            <input v-model="formData.name" />
+          </div>
+          <div class="form-group">
+            <label>邮箱</label>
+            <input v-model="formData.email" type="email" />
+          </div>
+          <div class="form-group">
+            <label>角色</label>
+            <select v-model="formData.role">
+              <option value="USER">用户</option>
+              <option value="ADMIN">管理员</option>
+              <option value="EDITOR">编辑</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select v-model="formData.status">
+              <option :value="1">正常</option>
+              <option :value="0">禁用</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" @click="closeModal">取消</button>
+            <button type="submit" class="btn-confirm">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue'
+import { userApi } from '../api'
+
 export default {
   name: 'Users',
   setup() {
-    const users = [
-      { id: 1, avatar: '👤', name: '张三', email: 'zhangsan@company.com', role: '管理员', status: 'active', statusText: '正常' },
-      { id: 2, avatar: '👤', name: '李四', email: 'lisi@company.com', role: '编辑', status: 'active', statusText: '正常' },
-      { id: 3, avatar: '👤', name: '王五', email: 'wangwu@company.com', role: '用户', status: 'inactive', statusText: '禁用' },
-      { id: 4, avatar: '👤', name: '赵六', email: 'zhaoliu@company.com', role: '用户', status: 'active', statusText: '正常' },
-      { id: 5, avatar: '👤', name: '钱七', email: 'qianqi@company.com', role: '编辑', status: 'active', statusText: '正常' }
-    ]
-    return { users }
+    const users = ref([])
+    const searchQuery = ref('')
+    const showAddModal = ref(false)
+    const showEditModal = ref(false)
+    const formData = ref({
+      username: '',
+      name: '',
+      email: '',
+      role: 'USER',
+      status: 1
+    })
+
+    const filteredUsers = computed(() => {
+      if (!searchQuery.value) return users.value
+      const query = searchQuery.value.toLowerCase()
+      return users.value.filter(user => 
+        (user.username && user.username.toLowerCase().includes(query)) ||
+        (user.name && user.name.toLowerCase().includes(query)) ||
+        (user.email && user.email.toLowerCase().includes(query))
+      )
+    })
+
+    const loadUsers = async () => {
+      try {
+        const res = await userApi.getAll()
+        if (res.code === 200) {
+          users.value = res.data || []
+        }
+      } catch (error) {
+        console.error('获取用户列表失败:', error)
+      }
+    }
+
+    const handleSearch = () => {
+      // 搜索已通过计算属性实现
+    }
+
+    const editUser = (user) => {
+      formData.value = { ...user }
+      showEditModal.value = true
+    }
+
+    const deleteUser = async (id) => {
+      if (!confirm('确定要删除该用户吗？')) return
+      try {
+        const res = await userApi.delete(id)
+        if (res.code === 200) {
+          await loadUsers()
+        }
+      } catch (error) {
+        console.error('删除用户失败:', error)
+      }
+    }
+
+    const saveUser = async () => {
+      try {
+        let res
+        if (showEditModal.value) {
+          res = await userApi.update(formData.value.id, formData.value)
+        } else {
+          res = await userApi.create(formData.value)
+        }
+        if (res.code === 200) {
+          closeModal()
+          await loadUsers()
+        }
+      } catch (error) {
+        console.error('保存用户失败:', error)
+      }
+    }
+
+    const closeModal = () => {
+      showAddModal.value = false
+      showEditModal.value = false
+      formData.value = {
+        username: '',
+        name: '',
+        email: '',
+        role: 'USER',
+        status: 1
+      }
+    }
+
+    onMounted(loadUsers)
+
+    return {
+      users,
+      filteredUsers,
+      searchQuery,
+      showAddModal,
+      showEditModal,
+      formData,
+      handleSearch,
+      editUser,
+      deleteUser,
+      saveUser,
+      closeModal
+    }
   }
 }
 </script>
@@ -94,4 +231,84 @@ export default {
 .action-btn { padding: 6px 12px; margin-right: 8px; border: none; border-radius: 6px; background: #f1f5f9; color: #475569; font-size: 12px; cursor: pointer; transition: all 0.2s; }
 .action-btn:hover { background: #e0f2fe; color: #0ea5e9; }
 .action-btn.danger:hover { background: #fee2e2; color: #dc2626; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #1e293b;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #0ea5e9;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
 </style>
