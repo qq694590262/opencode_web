@@ -21,6 +21,10 @@
           <span>{{ doc.size }}</span>
           <span>{{ formatDate(doc.createTime) }}</span>
         </div>
+        <div class="doc-actions">
+          <button class="btn-edit" @click.stop="editDoc(doc)">编辑</button>
+          <button class="btn-delete" @click.stop="deleteDoc(doc)">删除</button>
+        </div>
       </div>
     </div>
 
@@ -63,6 +67,8 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { documentApi } from '../api'
+import { showToast } from '../components/Toast.vue'
+import { showConfirm } from '../components/ConfirmDialog.vue'
 
 export default {
   name: 'Documents',
@@ -110,6 +116,7 @@ export default {
         }
       } catch (error) {
         console.error('获取文档列表失败:', error)
+        showToast({ type: 'error', message: '获取文档列表失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -129,11 +136,36 @@ export default {
           res = await documentApi.create(formData.value)
         }
         if (res.code === 200) {
+          showToast({ type: 'success', message: showEditModal.value ? '文档更新成功' : '文档创建成功' })
           closeModal()
           await loadDocs()
         }
       } catch (error) {
         console.error('保存文档失败:', error)
+        showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
+      }
+    }
+
+    const deleteDoc = async (doc) => {
+      const confirmed = await showConfirm({
+        title: '删除确认',
+        message: `确定要删除文档 "${doc.name}" 吗？此操作不可恢复。`,
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      })
+      
+      if (!confirmed) return
+      
+      try {
+        const res = await documentApi.delete(doc.id)
+        if (res.code === 200) {
+          showToast({ type: 'success', message: '删除成功' })
+          await loadDocs()
+        }
+      } catch (error) {
+        console.error('删除文档失败:', error)
+        showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -162,6 +194,7 @@ export default {
       handleSearch,
       editDoc,
       saveDoc,
+      deleteDoc,
       closeModal
     }
   }
@@ -194,7 +227,13 @@ export default {
 .doc-icon { font-size: 40px; margin-bottom: 12px; }
 .doc-info h4 { font-size: 15px; font-weight: 600; color: #1e293b; margin: 0 0 6px 0; }
 .doc-info p { font-size: 13px; color: #64748b; margin: 0 0 12px 0; }
-.doc-meta { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-top: auto; }
+.doc-meta { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-top: auto; margin-bottom: 12px; }
+
+.doc-actions { display: flex; gap: 8px; }
+.btn-edit { flex: 1; padding: 8px; border: none; border-radius: 8px; background: #e0f2fe; color: #0284c7; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.btn-edit:hover { background: #0ea5e9; color: white; }
+.btn-delete { padding: 8px 12px; border: none; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.btn-delete:hover { background: #dc2626; color: white; }
 
 .modal-overlay {
   position: fixed;

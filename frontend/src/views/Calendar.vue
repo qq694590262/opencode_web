@@ -35,7 +35,7 @@
             <p>{{ e.description }}</p>
           </div>
           <div class="event-actions">
-            <button class="btn-delete" @click.stop="deleteEvent(e.id)">删除</button>
+            <button class="btn-delete" @click.stop="deleteEvent(e)">删除</button>
           </div>
         </div>
       </div>
@@ -84,6 +84,8 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { calendarApi } from '../api'
+import { showToast } from '../components/Toast.vue'
+import { showConfirm } from '../components/ConfirmDialog.vue'
 
 export default {
   name: 'Calendar',
@@ -162,6 +164,7 @@ export default {
         }
       } catch (error) {
         console.error('获取日程失败:', error)
+        showToast({ type: 'error', message: '获取日程失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -184,15 +187,26 @@ export default {
       showEditModal.value = true
     }
 
-    const deleteEvent = async (id) => {
-      if (!confirm('确定要删除该日程吗？')) return
+    const deleteEvent = async (event) => {
+      const confirmed = await showConfirm({
+        title: '删除确认',
+        message: `确定要删除日程 "${event.title}" 吗？此操作不可恢复。`,
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      })
+      
+      if (!confirmed) return
+      
       try {
-        const res = await calendarApi.delete(id)
+        const res = await calendarApi.delete(event.id)
         if (res.code === 200) {
+          showToast({ type: 'success', message: '删除成功' })
           await loadEvents()
         }
       } catch (error) {
         console.error('删除日程失败:', error)
+        showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -205,11 +219,13 @@ export default {
           res = await calendarApi.create(formData.value)
         }
         if (res.code === 200) {
+          showToast({ type: 'success', message: showEditModal.value ? '日程更新成功' : '日程创建成功' })
           closeModal()
           await loadEvents()
         }
       } catch (error) {
         console.error('保存日程失败:', error)
+        showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
       }
     }
 

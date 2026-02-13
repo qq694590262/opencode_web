@@ -19,7 +19,7 @@
         </div>
         <div class="report-actions">
           <button class="btn-view" @click.stop="viewReport(report)">查看</button>
-          <button class="btn-delete" @click.stop="deleteReport(report.id)">删除</button>
+          <button class="btn-delete" @click.stop="deleteReport(report)">删除</button>
         </div>
       </div>
     </div>
@@ -65,6 +65,8 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { reportApi } from '../api'
+import { showToast } from '../components/Toast.vue'
+import { showConfirm } from '../components/ConfirmDialog.vue'
 
 export default {
   name: 'Reports',
@@ -97,6 +99,7 @@ export default {
         }
       } catch (error) {
         console.error('获取报表列表失败:', error)
+        showToast({ type: 'error', message: '获取报表列表失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -112,15 +115,26 @@ export default {
       showEditModal.value = true
     }
 
-    const deleteReport = async (id) => {
-      if (!confirm('确定要删除该报表吗？')) return
+    const deleteReport = async (report) => {
+      const confirmed = await showConfirm({
+        title: '删除确认',
+        message: `确定要删除报表 "${report.title}" 吗？此操作不可恢复。`,
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      })
+      
+      if (!confirmed) return
+      
       try {
-        const res = await reportApi.delete(id)
+        const res = await reportApi.delete(report.id)
         if (res.code === 200) {
+          showToast({ type: 'success', message: '删除成功' })
           await loadReports()
         }
       } catch (error) {
         console.error('删除报表失败:', error)
+        showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -133,11 +147,13 @@ export default {
           res = await reportApi.create(formData.value)
         }
         if (res.code === 200) {
+          showToast({ type: 'success', message: showEditModal.value ? '报表更新成功' : '报表创建成功' })
           closeModal()
           await loadReports()
         }
       } catch (error) {
         console.error('保存报表失败:', error)
+        showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
       }
     }
 

@@ -40,7 +40,7 @@
             </td>
             <td>
               <button class="action-btn" @click="editUser(user)">编辑</button>
-              <button class="action-btn danger" @click="deleteUser(user.id)">删除</button>
+              <button class="action-btn danger" @click="deleteUser(user)">删除</button>
             </td>
           </tr>
         </tbody>
@@ -92,6 +92,8 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { userApi } from '../api'
+import { showToast } from '../components/Toast.vue'
+import { showConfirm } from '../components/ConfirmDialog.vue'
 
 export default {
   name: 'Users',
@@ -126,6 +128,7 @@ export default {
         }
       } catch (error) {
         console.error('获取用户列表失败:', error)
+        showToast({ type: 'error', message: '获取用户列表失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -138,15 +141,26 @@ export default {
       showEditModal.value = true
     }
 
-    const deleteUser = async (id) => {
-      if (!confirm('确定要删除该用户吗？')) return
+    const deleteUser = async (user) => {
+      const confirmed = await showConfirm({
+        title: '删除确认',
+        message: `确定要删除用户 "${user.name || user.username}" 吗？此操作不可恢复。`,
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      })
+      
+      if (!confirmed) return
+      
       try {
-        const res = await userApi.delete(id)
+        const res = await userApi.delete(user.id)
         if (res.code === 200) {
+          showToast({ type: 'success', message: '删除成功' })
           await loadUsers()
         }
       } catch (error) {
         console.error('删除用户失败:', error)
+        showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
       }
     }
 
@@ -159,11 +173,13 @@ export default {
           res = await userApi.create(formData.value)
         }
         if (res.code === 200) {
+          showToast({ type: 'success', message: showEditModal.value ? '用户更新成功' : '用户创建成功' })
           closeModal()
           await loadUsers()
         }
       } catch (error) {
         console.error('保存用户失败:', error)
+        showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
       }
     }
 

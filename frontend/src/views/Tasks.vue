@@ -99,6 +99,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { taskApi } from '../api'
 import { showToast } from '../components/Toast.vue'
+import { showConfirm } from '../components/ConfirmDialog.vue'
 
 const tasks = ref([])
 const searchQuery = ref('')
@@ -272,9 +273,15 @@ const handleSubmit = async () => {
 }
 
 const handleDelete = async (task) => {
-  if (!confirm(`确定要删除任务 "${task.title}" 吗？`)) {
-    return
-  }
+  const confirmed = await showConfirm({
+    title: '删除确认',
+    message: `确定要删除任务 "${task.title}" 吗？此操作不可恢复。`,
+    type: 'danger',
+    confirmText: '删除',
+    cancelText: '取消'
+  })
+  
+  if (!confirmed) return
   
   try {
     loading.value = true
