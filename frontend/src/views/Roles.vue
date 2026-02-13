@@ -57,6 +57,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { roleApi } from '../api'
+import { showToast } from '../components/Toast.vue'
 
 const roles = ref([])
 const searchQuery = ref('')
@@ -89,7 +90,7 @@ const loadRoles = async () => {
     }
   } catch (error) {
     console.error('加载角色失败:', error)
-    alert('加载角色失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '加载角色失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -133,17 +134,17 @@ const handleSubmit = async () => {
     
     if (isEditing.value) {
       await roleApi.update(editingId.value, submitData)
-      alert('角色更新成功')
+      showToast({ type: 'success', message: '角色更新成功' })
     } else {
       await roleApi.create(submitData)
-      alert('角色创建成功')
+      showToast({ type: 'success', message: '角色创建成功' })
     }
     
     closeModal()
     await loadRoles()
   } catch (error) {
     console.error('保存角色失败:', error)
-    alert('保存失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -157,11 +158,11 @@ const handleDelete = async (role) => {
   try {
     loading.value = true
     await roleApi.delete(role.id)
-    alert('删除成功')
+    showToast({ type: 'success', message: '删除成功' })
     await loadRoles()
   } catch (error) {
     console.error('删除角色失败:', error)
-    alert('删除失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }

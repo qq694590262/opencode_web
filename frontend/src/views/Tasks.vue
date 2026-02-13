@@ -98,6 +98,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { taskApi } from '../api'
+import { showToast } from '../components/Toast.vue'
 
 const tasks = ref([])
 const searchQuery = ref('')
@@ -171,7 +172,7 @@ const loadTasks = async () => {
     }
   } catch (error) {
     console.error('加载任务失败:', error)
-    alert('加载任务失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '加载任务失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -191,7 +192,7 @@ const handleFilter = async () => {
       }
     } catch (error) {
       console.error('按状态加载任务失败:', error)
-      alert('加载失败: ' + (error.message || '未知错误'))
+      showToast({ type: 'error', message: '加载失败: ' + (error.message || '未知错误') })
       await loadTasks()
     } finally {
       loading.value = false
@@ -254,17 +255,17 @@ const handleSubmit = async () => {
     
     if (isEditing.value) {
       await taskApi.update(editingId.value, submitData)
-      alert('任务更新成功')
+      showToast({ type: 'success', message: '任务更新成功' })
     } else {
       await taskApi.create(submitData)
-      alert('任务创建成功')
+      showToast({ type: 'success', message: '任务创建成功' })
     }
     
     closeModal()
     await loadTasks()
   } catch (error) {
     console.error('保存任务失败:', error)
-    alert('保存失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -278,11 +279,11 @@ const handleDelete = async (task) => {
   try {
     loading.value = true
     await taskApi.delete(task.id)
-    alert('删除成功')
+    showToast({ type: 'success', message: '删除成功' })
     await loadTasks()
   } catch (error) {
     console.error('删除任务失败:', error)
-    alert('删除失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }

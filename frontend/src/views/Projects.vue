@@ -97,6 +97,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { projectApi } from '../api'
+import { showToast } from '../components/Toast.vue'
 
 const projects = ref([])
 const searchQuery = ref('')
@@ -138,7 +139,7 @@ const loadProjects = async () => {
     }
   } catch (error) {
     console.error('加载项目失败:', error)
-    alert('加载项目失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '加载项目失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -206,17 +207,17 @@ const handleSubmit = async () => {
     
     if (isEditing.value) {
       await projectApi.update(editingId.value, submitData)
-      alert('项目更新成功')
+      showToast({ type: 'success', message: '项目更新成功' })
     } else {
       await projectApi.create(submitData)
-      alert('项目创建成功')
+      showToast({ type: 'success', message: '项目创建成功' })
     }
     
     closeModal()
     await loadProjects()
   } catch (error) {
     console.error('保存项目失败:', error)
-    alert('保存失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
@@ -230,11 +231,11 @@ const handleDelete = async (project) => {
   try {
     loading.value = true
     await projectApi.delete(project.id)
-    alert('删除成功')
+    showToast({ type: 'success', message: '删除成功' })
     await loadProjects()
   } catch (error) {
     console.error('删除项目失败:', error)
-    alert('删除失败: ' + (error.message || '未知错误'))
+    showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
   } finally {
     loading.value = false
   }
