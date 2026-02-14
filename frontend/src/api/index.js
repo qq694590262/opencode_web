@@ -30,6 +30,12 @@ export const authApi = {
   
   getInfo: () => 
     request('/auth/info'),
+  
+  changePassword: (oldPassword, newPassword) => 
+    request('/auth/password', {
+      method: 'POST',
+      body: JSON.stringify({ oldPassword, newPassword }),
+    }),
 }
 
 export const userApi = {

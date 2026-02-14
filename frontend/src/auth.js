@@ -36,3 +36,13 @@ export async function getUserInfo() {
     return null
   }
 }
+
+export async function changePassword(oldPassword, newPassword) {
+  try {
+    const result = await authApi.changePassword(oldPassword, newPassword)
+    return result
+  } catch (error) {
+    console.error('修改密码失败:', error)
+    return { code: 500, message: '修改密码失败' }
+  }
+}

@@ -50,4 +50,25 @@ public class AuthController {
         }
         return Result.error("未登录");
     }
+    
+    @PostMapping("/password")
+    public Result<Void> changePassword(@RequestBody Map<String, String> params, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return Result.error("未登录");
+        }
+        
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        
+        if (oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty()) {
+            return Result.error("密码不能为空");
+        }
+        
+        boolean success = userService.updatePassword(userId, oldPassword, newPassword);
+        if (success) {
+            return Result.success(null);
+        }
+        return Result.error("原密码错误");
+    }
 }

@@ -66,7 +66,7 @@
             </div>
             <div class="chart-content">
               <div class="chart-lines">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
                   <path class="line line-1" d="M0,70 Q20,60 40,50 T80,30 T100,20" />
                   <path class="line line-2" d="M0,80 Q20,70 40,65 T80,50 T100,40" />
                 </svg>
@@ -343,6 +343,10 @@ export default {
 <style scoped>
 .page-content {
   animation: fadeIn 0.3s ease;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 @keyframes fadeIn {
@@ -585,6 +589,7 @@ export default {
 .chart-lines {
   flex: 1;
   position: relative;
+  overflow: hidden;
 }
 
 .chart-lines svg {

@@ -28,4 +28,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean updateUser(User user) {
         return this.updateById(user);
     }
+    
+    @Override
+    public boolean updatePassword(Long userId, String oldPassword, String newPassword) {
+        User user = this.getById(userId);
+        if (user == null) {
+            return false;
+        }
+        if (!user.getPassword().equals(oldPassword)) {
+            return false;
+        }
+        user.setPassword(newPassword);
+        return this.updateById(user);
+    }
 }

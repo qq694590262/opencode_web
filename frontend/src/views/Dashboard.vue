@@ -1,30 +1,16 @@
 <template>
   <div class="dashboard">
-    <aside class="sidebar">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
       <div class="brand">
         <span class="brand-icon">💙</span>
-        <span>Opencode</span>
+        <span v-if="!sidebarCollapsed" class="brand-text">Opencode</span>
       </div>
       
-      <!-- 用户信息卡片 -->
-      <div class="user-card">
-        <div class="user-avatar">
-          {{ userInfo.name ? userInfo.name.charAt(0).toUpperCase() : 'U' }}
-        </div>
-        <div class="user-details">
-          <span class="user-name">{{ userInfo.name || userInfo.username || '用户' }}</span>
-          <span class="user-role">{{ getRoleText(userInfo.role) }}</span>
-        </div>
-        <div class="user-status" :class="{ online: true }">
-          <span class="status-dot"></span>
-          <span class="status-text">在线</span>
-        </div>
-      </div>
-      
-      <SideMenu :menu="MENU" />
+      <SideMenu v-if="!sidebarCollapsed" :menu="MENU" />
       
       <div class="sidebar-footer">
-        <div class="quick-stats">
+        <div v-if="!sidebarCollapsed" class="quick-stats">
           <div class="stat-item">
             <span class="stat-value">{{ stats.projects }}</span>
             <span class="stat-label">项目</span>
@@ -33,19 +19,20 @@
             <span class="stat-value">{{ stats.tasks }}</span>
             <span class="stat-label">任务</span>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.messages }}</span>
-            <span class="stat-label">消息</span>
-          </div>
         </div>
         <button class="logout-btn" @click="handleLogout">
           <span class="logout-icon">🚪</span>
-          <span>退出登录</span>
+          <span v-if="!sidebarCollapsed">退出登录</span>
         </button>
       </div>
     </aside>
+
+    <!-- 侧边栏折叠按钮 - 放在左边区域右上角外部 -->
+    <button class="sidebar-toggle" @click="toggleSidebar" :style="{ left: sidebarCollapsed ? '16px' : '264px' }">
+      <span>{{ sidebarCollapsed ? '→' : '←' }}</span>
+    </button>
     
-    <section class="main-content">
+    <section class="main-content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
       <header class="topbar">
         <div class="breadcrumb">
           <span class="home-icon">🏠</span>
@@ -62,7 +49,7 @@
               <input 
                 type="text" 
                 v-model="searchQuery"
-                placeholder="搜索菜单、功能..."
+                placeholder="搜索菜单，功能..."
                 @focus="searchFocused = true"
                 @blur="handleSearchBlur"
                 @keyup.enter="handleSearch"
@@ -96,18 +83,34 @@
             </transition>
           </div>
           
-          <!-- 顶部图标 -->
+          <!-- 顶部操作区 -->
           <div class="topbar-actions">
-            <button class="icon-btn notification" :class="{ hasUnread: stats.messages > 0 }">
-              <span class="icon">🔔</span>
-              <span v-if="stats.messages > 0" class="badge">{{ stats.messages > 99 ? '99+' : stats.messages }}</span>
-            </button>
-            <button class="icon-btn" @click="goToSettings">
-              <span class="icon">⚙️</span>
-            </button>
-            <button class="icon-btn avatar-btn" @click="goToProfile">
-              <span class="mini-avatar">{{ userInfo.name ? userInfo.name.charAt(0).toUpperCase() : 'U' }}</span>
-            </button>
+            <!-- 设置下拉菜单 -->
+            <div class="settings-dropdown" ref="settingsDropdown">
+              <button class="icon-btn settings-btn" @click="toggleSettingsMenu">
+                <span class="icon">⚙️</span>
+              </button>
+              <transition name="dropdown-fade">
+                <div v-if="showSettingsMenu" class="dropdown-menu">
+                  <div class="dropdown-item" @click="goToSettings">
+                    <span class="dropdown-icon">🔧</span>
+                    <span>系统设置</span>
+                  </div>
+                  <div class="dropdown-item" @click="goToProfile">
+                    <span class="dropdown-icon">👤</span>
+                    <span>个人信息</span>
+                  </div>
+                  <div class="dropdown-divider"></div>
+                  <div class="dropdown-item danger" @click="handleLogout">
+                    <span class="dropdown-icon">🚪</span>
+                    <span>退出登录</span>
+                  </div>
+                </div>
+              </transition>
+            </div>
+            
+            <!-- 用户名称 - 纯文本 -->
+            <span class="user-name-text">{{ userInfo.name || userInfo.username || '用户' }}</span>
           </div>
         </div>
       </header>
@@ -132,7 +135,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { dashboardApi } from '../api'
 import { showToast } from '../components/Toast.vue'
 import { showConfirm } from '../components/ConfirmDialog.vue'
-import { searchWithPinyin, getPinyinInitials } from '../utils/pinyin.js'
+import { getPinyinInitials, getFullPinyin } from '../utils/pinyin.js'
 
 export default {
   name: 'Dashboard',
@@ -144,6 +147,10 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const searchWrapper = ref(null)
+    const settingsDropdown = ref(null)
+    
+    // 侧边栏折叠状态
+    const sidebarCollapsed = ref(false)
     
     // 用户信息
     const userInfo = ref({})
@@ -159,6 +166,22 @@ export default {
     const searchQuery = ref('')
     const searchFocused = ref(false)
     const selectedSearchIndex = ref(0)
+    const showSettingsMenu = ref(false)
+    
+    // 切换侧边栏
+    const toggleSidebar = () => {
+      sidebarCollapsed.value = !sidebarCollapsed.value
+    }
+    
+    // 切换设置菜单
+    const toggleSettingsMenu = () => {
+      showSettingsMenu.value = !showSettingsMenu.value
+    }
+    
+    // 关闭设置菜单
+    const closeSettingsMenu = () => {
+      showSettingsMenu.value = false
+    }
     
     // 生成搜索索引
     const searchIndex = computed(() => {
@@ -187,7 +210,7 @@ export default {
       return items
     })
     
-    // 过滤搜索结果（支持拼音首字母搜索）
+    // 过滤搜索结果（支持中文、拼音首字母、全拼）
     const filteredSearchResults = computed(() => {
       if (!searchQuery.value.trim()) return []
       const query = searchQuery.value.toLowerCase()
@@ -200,13 +223,24 @@ export default {
         }
         
         // 拼音首字母匹配
-        const labelPinyin = getPinyinInitials(item.label).toLowerCase()
-        const categoryPinyin = getPinyinInitials(item.category).toLowerCase()
-        const pathPinyin = getPinyinInitials(item.path).toLowerCase()
+        const labelInitials = getPinyinInitials(item.label).toLowerCase()
+        const categoryInitials = getPinyinInitials(item.category).toLowerCase()
+        const pathInitials = getPinyinInitials(item.path).toLowerCase()
         
-        return labelPinyin.includes(query) ||
-               categoryPinyin.includes(query) ||
-               pathPinyin.includes(query)
+        if (labelInitials.includes(query) ||
+            categoryInitials.includes(query) ||
+            pathInitials.includes(query)) {
+          return true
+        }
+        
+        // 全拼匹配
+        const labelFull = getFullPinyin(item.label).toLowerCase()
+        const categoryFull = getFullPinyin(item.category).toLowerCase()
+        const pathFull = getFullPinyin(item.path).toLowerCase()
+        
+        return labelFull.includes(query) ||
+               categoryFull.includes(query) ||
+               pathFull.includes(query)
       }).slice(0, 8)
     })
     
@@ -252,17 +286,6 @@ export default {
       }
     }
     
-    // 角色文本转换
-    const getRoleText = (role) => {
-      const roleMap = {
-        'ADMIN': '超级管理员',
-        'USER': '普通用户',
-        'EDITOR': '编辑',
-        'MANAGER': '经理'
-      }
-      return roleMap[role] || role || '用户'
-    }
-    
     // 搜索功能
     const handleSearch = () => {
       if (filteredSearchResults.value.length > 0) {
@@ -301,14 +324,17 @@ export default {
     }
     
     const goToSettings = () => {
+      closeSettingsMenu()
       router.push('/dashboard/system')
     }
     
     const goToProfile = () => {
+      closeSettingsMenu()
       router.push('/dashboard/profile')
     }
     
     const handleLogout = async () => {
+      closeSettingsMenu()
       const confirmed = await showConfirm({
         title: '退出确认',
         message: '确定要退出登录吗？',
@@ -323,8 +349,11 @@ export default {
       }
     }
     
-    // 点击外部关闭搜索
+    // 点击外部关闭设置菜单
     const handleClickOutside = (e) => {
+      if (settingsDropdown.value && !settingsDropdown.value.contains(e.target)) {
+        closeSettingsMenu()
+      }
       if (searchWrapper.value && !searchWrapper.value.contains(e.target)) {
         searchFocused.value = false
       }
@@ -341,15 +370,19 @@ export default {
     })
     
     return {
+      sidebarCollapsed,
       userInfo,
       stats,
       searchQuery,
       searchFocused,
       selectedSearchIndex,
       searchWrapper,
+      settingsDropdown,
+      showSettingsMenu,
       filteredSearchResults,
       currentPageTitle,
-      getRoleText,
+      toggleSidebar,
+      toggleSettingsMenu,
       handleSearch,
       navigateTo,
       clearSearch,
@@ -371,6 +404,7 @@ export default {
   height: 100vh;
   overflow: hidden;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+  position: relative;
 }
 
 /* 侧边栏 */
@@ -383,7 +417,15 @@ export default {
   flex-direction: column;
   box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
+  transition: all 0.3s ease;
   position: relative;
+  z-index: 10;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  min-width: 80px;
+  padding: 20px 12px;
 }
 
 .sidebar::before {
@@ -395,6 +437,31 @@ export default {
   bottom: 0;
   background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
+}
+
+/* 侧边栏折叠按钮 */
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  transform: translateY(0);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #0c4a6e, #075985);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-toggle:hover {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
 }
 
 /* 品牌标识 */
@@ -416,84 +483,8 @@ export default {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-/* 用户卡片 */
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  margin-bottom: 24px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
-
-.user-card:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-.user-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.user-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.user-role {
-  font-size: 12px;
-  color: #7dd3fc;
-  margin-top: 2px;
-}
-
-.user-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: rgba(34, 197, 94, 0.2);
-  border-radius: 20px;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.status-text {
-  font-size: 11px;
-  color: #86efac;
+.brand-text {
+  white-space: nowrap;
 }
 
 /* 侧边栏底部 */
@@ -566,6 +557,12 @@ export default {
   overflow: hidden;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
+  margin-left: 0;
+  transition: all 0.3s ease;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 0;
 }
 
 /* 顶部栏 */
@@ -619,7 +616,8 @@ export default {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
+  padding-right: 8px;
 }
 
 /* 搜索框 */
@@ -758,11 +756,31 @@ export default {
   transform: translateY(-10px);
 }
 
-/* 顶部操作按钮 */
+/* 顶部操作区 */
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  margin-left: auto;
+}
+
+/* 用户名称 - 纯文本 */
+.user-name-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.user-name-text:hover {
+  color: #0ea5e9;
+}
+
+/* 设置下拉菜单 */
+.settings-dropdown {
+  position: relative;
 }
 
 .icon-btn {
@@ -788,47 +806,62 @@ export default {
   font-size: 18px;
 }
 
-.icon-btn.notification.hasUnread {
-  background: #fef3c7;
-}
-
-.icon-btn.notification.hasUnread:hover {
-  background: #fde68a;
-}
-
-.badge {
+/* 下拉菜单 */
+.dropdown-menu {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
-}
-
-.avatar-btn {
-  padding: 0;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
+  z-index: 1000;
+  min-width: 160px;
 }
 
-.mini-avatar {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+.dropdown-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #334155;
+}
+
+.dropdown-item:hover {
+  background: #f0f9ff;
+}
+
+.dropdown-item.danger {
+  color: #dc2626;
+}
+
+.dropdown-item.danger:hover {
+  background: #fef2f2;
+}
+
+.dropdown-icon {
   font-size: 16px;
-  font-weight: 600;
-  color: #fff;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 4px 0;
+}
+
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: all 0.2s ease;
+}
+
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 /* 内容区 */

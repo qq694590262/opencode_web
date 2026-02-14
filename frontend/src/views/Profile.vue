@@ -233,7 +233,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import { getUserInfo } from '../auth'
+import { getUserInfo, changePassword } from '../auth'
 import { userApi } from '../api'
 import { showToast } from '../components/Toast.vue'
 
@@ -355,13 +355,25 @@ export default {
         return
       }
       
+      if (passwordForm.value.newPassword.length < 6) {
+        passwordError.value = '密码长度至少6位'
+        return
+      }
+      
       changingPassword.value = true
       try {
-        // 模拟修改密码
-        await new Promise(resolve => setTimeout(resolve, 800))
-        showToast({ type: 'success', message: '密码修改成功' })
-        showPasswordModal.value = false
-        passwordForm.value = { oldPassword: '', newPassword: '', confirmPassword: '' }
+        const result = await changePassword(
+          passwordForm.value.oldPassword,
+          passwordForm.value.newPassword
+        )
+        
+        if (result.code === 200) {
+          showToast({ type: 'success', message: '密码修改成功' })
+          showPasswordModal.value = false
+          passwordForm.value = { oldPassword: '', newPassword: '', confirmPassword: '' }
+        } else {
+          passwordError.value = result.message || '原密码错误'
+        }
       } catch (error) {
         showToast({ type: 'error', message: '密码修改失败' })
       } finally {
