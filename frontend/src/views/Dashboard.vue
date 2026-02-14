@@ -3,8 +3,8 @@
     <!-- 侧边栏 -->
     <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
       <div class="brand">
-        <span class="brand-icon">💙</span>
-        <span v-if="!sidebarCollapsed" class="brand-text">Opencode</span>
+        <span class="brand-icon">🏢</span>
+        <span v-if="!sidebarCollapsed" class="brand-text">企业管理系统</span>
       </div>
       
       <SideMenu v-if="!sidebarCollapsed" :menu="MENU" />
@@ -409,13 +409,13 @@ export default {
 
 /* 侧边栏 */
 .sidebar {
-  width: 280px;
-  min-width: 280px;
-  background: linear-gradient(180deg, #0c4a6e 0%, #075985 50%, #0c4a6e 100%);
-  padding: 20px 16px;
+  width: 240px;
+  min-width: 240px;
+  background: linear-gradient(180deg, #1e3a5f 0%, #2d4a6f 50%, #1e3a5f 100%);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
   transition: all 0.3s ease;
   position: relative;
@@ -423,9 +423,8 @@ export default {
 }
 
 .sidebar.collapsed {
-  width: 80px;
-  min-width: 80px;
-  padding: 20px 12px;
+  width: 72px;
+  min-width: 72px;
 }
 
 .sidebar::before {
@@ -442,26 +441,32 @@ export default {
 /* 侧边栏折叠按钮 */
 .sidebar-toggle {
   position: absolute;
-  top: 20px;
-  transform: translateY(0);
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #0c4a6e, #075985);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 48px;
+  background: linear-gradient(135deg, #1e3a5f, #2d4a6f);
   border: none;
-  border-radius: 8px;
-  color: white;
+  border-radius: 0 6px 6px 0;
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   transition: all 0.3s ease;
   z-index: 20;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  left: 240px;
+}
+
+.sidebar.collapsed + .sidebar-toggle {
+  left: 72px;
 }
 
 .sidebar-toggle:hover {
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
 }
 
 /* 品牌标识 */
@@ -469,22 +474,25 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #fff;
-  padding: 12px;
-  margin-bottom: 24px;
+  padding: 20px 20px 20px 24px;
+  margin-bottom: 8px;
   position: relative;
   z-index: 1;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .brand-icon {
-  font-size: 28px;
+  font-size: 26px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .brand-text {
   white-space: nowrap;
+  letter-spacing: 1px;
 }
 
 /* 侧边栏底部 */
