@@ -155,7 +155,7 @@ export default {
 }
 
 .sub-item .menu-entry {
-  padding: 10px 14px 10px 44px;
+  padding: 10px 14px 10px 36px;
   font-size: 13px;
   color: #909399;
 }
@@ -171,7 +171,7 @@ export default {
 }
 
 .sub-item .sub-entry {
-  padding: 10px 14px 10px 66px;
+  padding: 10px 14px 10px 54px;
   font-size: 13px;
 }
 </style>
