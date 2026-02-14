@@ -17,10 +17,10 @@
       </div>
     </aside>
 
-    <!-- 折叠按钮 - 始终显示，在侧边栏外上方紧贴 -->
+    <!-- 折叠按钮 - 始终显示，在侧边栏外右侧紧贴 -->
     <button class="sidebar-toggle" @click="toggleSidebar">
-      <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
-        <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <svg width="18" height="16" viewBox="0 0 18 16" fill="none">
+        <path d="M2 8H16M2 2H16M2 14H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </button>
     
@@ -427,8 +427,8 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   left: 220px;
-  width: 20px;
-  height: 48px;
+  width: 24px;
+  height: 56px;
   background: #ffffff;
   border: none;
   border-left: 1px solid #e4e7ed;
