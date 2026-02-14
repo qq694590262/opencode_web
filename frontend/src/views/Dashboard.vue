@@ -10,16 +10,6 @@
       <SideMenu v-if="!sidebarCollapsed" :menu="MENU" />
       
       <div class="sidebar-footer">
-        <div v-if="!sidebarCollapsed" class="quick-stats">
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.projects }}</span>
-            <span class="stat-label">项目</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.tasks }}</span>
-            <span class="stat-label">任务</span>
-          </div>
-        </div>
         <button class="logout-btn" @click="handleLogout">
           <span class="logout-icon">🚪</span>
           <span v-if="!sidebarCollapsed">退出登录</span>
@@ -27,9 +17,17 @@
       </div>
     </aside>
 
-    <!-- 侧边栏折叠按钮 - 放在左边区域右上角外部 -->
-    <button class="sidebar-toggle" @click="toggleSidebar" :style="{ left: sidebarCollapsed ? '16px' : '264px' }">
-      <span>{{ sidebarCollapsed ? '→' : '←' }}</span>
+    <!-- 侧边栏折叠按钮 - 右上角外部 -->
+    <button class="sidebar-toggle" @click="toggleSidebar" :class="{ collapsed: sidebarCollapsed }">
+      <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
+        <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <svg v-if="!sidebarCollapsed" class="arrow-icon" width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M7 2L3 5L7 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg v-else class="arrow-icon" width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M3 2L7 5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </button>
     
     <section class="main-content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
@@ -403,70 +401,65 @@ export default {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+  background: #f5f7fa;
   position: relative;
 }
 
 /* 侧边栏 */
 .sidebar {
-  width: 240px;
-  min-width: 240px;
-  background: linear-gradient(180deg, #1e3a5f 0%, #2d4a6f 50%, #1e3a5f 100%);
-  padding: 0;
+  width: 220px;
+  min-width: 220px;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
   overflow-y: auto;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   position: relative;
   z-index: 10;
+  border-right: 1px solid #e4e7ed;
 }
 
 .sidebar.collapsed {
-  width: 72px;
-  min-width: 72px;
+  width: 64px;
+  min-width: 64px;
 }
 
-.sidebar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-}
-
-/* 侧边栏折叠按钮 */
+/* 侧边栏折叠按钮 - 右上角外部 */
 .sidebar-toggle {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 48px;
-  background: linear-gradient(135deg, #1e3a5f, #2d4a6f);
-  border: none;
-  border-radius: 0 6px 6px 0;
-  color: rgba(255, 255, 255, 0.7);
+  top: 16px;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  border: 1px solid #e4e7ed;
+  border-radius: 50%;
+  color: #606266;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  transition: all 0.3s ease;
+  gap: 2px;
+  transition: all 0.25s ease;
   z-index: 20;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  left: 240px;
-}
-
-.sidebar.collapsed + .sidebar-toggle {
-  left: 72px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-toggle:hover {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: #409eff;
+  border-color: #409eff;
   color: #fff;
+  box-shadow: 0 2px 12px rgba(64, 158, 255, 0.4);
+}
+
+.sidebar-toggle svg {
+  transition: all 0.25s ease;
+}
+
+.sidebar-toggle .arrow-icon {
+  position: absolute;
+  right: 3px;
 }
 
 /* 品牌标识 */
@@ -474,60 +467,34 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  padding: 20px 20px 20px 24px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #303133;
+  padding: 18px 20px;
   margin-bottom: 8px;
   position: relative;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #ebeef5;
 }
 
 .brand-icon {
-  font-size: 26px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  font-size: 24px;
+  flex-shrink: 0;
 }
 
 .brand-text {
   white-space: nowrap;
-  letter-spacing: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 侧边栏底部 */
 .sidebar-footer {
   margin-top: auto;
-  padding-top: 20px;
+  padding: 16px;
   position: relative;
   z-index: 1;
-}
-
-.quick-stats {
-  display: flex;
-  justify-content: space-around;
-  padding: 16px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  margin-bottom: 16px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-weight: 700;
-  color: #38bdf8;
-}
-
-.stat-label {
-  font-size: 11px;
-  color: #7dd3fc;
+  border-top: 1px solid #ebeef5;
 }
 
 .logout-btn {
@@ -536,21 +503,20 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 12px;
-  color: #fca5a5;
+  padding: 10px 16px;
+  background: #fff;
+  border: 1px solid #ebeef5;
+  border-radius: 8px;
+  color: #606266;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  background: #fef0f0;
+  border-color: #fdecea;
+  color: #f56c6c;
 }
 
 .logout-icon {
@@ -563,10 +529,9 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
+  background: #f5f7fa;
   margin-left: 0;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .main-content.sidebar-collapsed {
@@ -578,7 +543,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+  padding: 16px 24px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(14, 165, 233, 0.1);

@@ -80,7 +80,7 @@ export default {
 
 <style scoped>
 .side-menu {
-  padding: 8px 12px;
+  padding: 8px;
   margin: 0;
   flex: 1;
   overflow-y: auto;
@@ -93,38 +93,42 @@ export default {
 }
 
 .menu-item {
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 .menu-entry {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 11px 14px;
   cursor: pointer;
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #606266;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
 .menu-entry:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: #f5f7fa;
+  color: #409eff;
 }
 
 .menu-entry.active {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+  background: #ecf5ff;
+  color: #409eff;
+}
+
+.menu-entry.active .icon {
+  transform: scale(1.1);
 }
 
 .icon {
   font-size: 16px;
-  width: 22px;
+  width: 20px;
   text-align: center;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
 .label {
@@ -135,9 +139,9 @@ export default {
 }
 
 .caret {
-  font-size: 9px;
+  font-size: 10px;
   transition: transform 0.2s ease;
-  color: rgba(255, 255, 255, 0.5);
+  color: #c0c4cc;
 }
 
 .caret.expanded {
@@ -151,23 +155,23 @@ export default {
 }
 
 .sub-item .menu-entry {
-  padding: 10px 16px 10px 48px;
+  padding: 10px 14px 10px 44px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #909399;
 }
 
 .sub-item .menu-entry:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: #f5f7fa;
+  color: #409eff;
 }
 
 .sub-item .menu-entry.active {
-  background: rgba(59, 130, 246, 0.3);
-  color: #fff;
+  background: #ecf5ff;
+  color: #409eff;
 }
 
 .sub-item .sub-entry {
-  padding: 10px 16px 10px 72px;
+  padding: 10px 14px 10px 66px;
   font-size: 13px;
 }
 </style>
