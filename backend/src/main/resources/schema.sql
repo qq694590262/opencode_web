@@ -104,6 +104,23 @@ CREATE TABLE IF NOT EXISTS sys_wiki_category (
     deleted INT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 知识库文章表
+CREATE TABLE IF NOT EXISTS sys_wiki_article (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    category_id BIGINT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    summary VARCHAR(500),
+    content TEXT,
+    author VARCHAR(50),
+    view_count INT DEFAULT 0,
+    like_count INT DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted INT DEFAULT 0,
+    INDEX idx_category (category_id),
+    INDEX idx_create_time (create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 设置表
 CREATE TABLE IF NOT EXISTS sys_settings (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

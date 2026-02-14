@@ -84,6 +84,12 @@ export const wikiApi = {
   createCategory: (data) => request('/wiki/categories', { method: 'POST', body: JSON.stringify(data) }),
   updateCategory: (id, data) => request(`/wiki/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCategory: (id) => request(`/wiki/categories/${id}`, { method: 'DELETE' }),
+  // 文章相关API
+  getArticles: () => request('/wiki/articles'),
+  getArticleById: (id) => request(`/wiki/articles/${id}`),
+  createArticle: (data) => request('/wiki/articles', { method: 'POST', body: JSON.stringify(data) }),
+  updateArticle: (id, data) => request(`/wiki/articles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteArticle: (id) => request(`/wiki/articles/${id}`, { method: 'DELETE' }),
 }
 
 export const settingsApi = {
