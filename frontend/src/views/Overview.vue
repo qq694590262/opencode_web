@@ -289,7 +289,7 @@ export default {
       { icon: '✏️', text: '钱七编辑了文章 "Vue3最佳实践"', time: '5小时前', color: '#fee2e2' }
     ])
 
-    const refreshData = async () => {
+    const refreshData = async (showNotification = true) => {
       refreshing.value = true
       try {
         const res = await dashboardApi.getOverview()
@@ -301,10 +301,14 @@ export default {
           statistics.value[2].value = data.totalProjects?.toString() || '56'
           statistics.value[3].value = data.completedTasks?.toString() || '234'
         }
-        showToast({ type: 'success', message: '数据已刷新' })
+        if (showNotification) {
+          showToast({ type: 'success', message: '数据已刷新' })
+        }
       } catch (error) {
         console.error('刷新数据失败:', error)
-        showToast({ type: 'error', message: '刷新失败' })
+        if (showNotification) {
+          showToast({ type: 'error', message: '刷新失败' })
+        }
       } finally {
         setTimeout(() => {
           refreshing.value = false
@@ -313,7 +317,7 @@ export default {
     }
 
     onMounted(() => {
-      refreshData()
+      refreshData(false) // 初始加载不显示提示
     })
 
     return {
