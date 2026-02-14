@@ -8,7 +8,6 @@ import com.opencode.mapper.LogMapper;
 import com.opencode.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,16 +30,15 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     }
     
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean saveLog(Log log) {
+    public boolean saveLog(Log logEntity) {
         try {
-            if (log.getCreateTime() == null) {
-                log.setCreateTime(LocalDateTime.now());
+            if (logEntity.getCreateTime() == null) {
+                logEntity.setCreateTime(LocalDateTime.now());
             }
-            if (log.getStatus() == null) {
-                log.setStatus(1);
+            if (logEntity.getStatus() == null) {
+                logEntity.setStatus(1);
             }
-            return this.save(log);
+            return this.save(logEntity);
         } catch (Exception e) {
             log.error("保存日志失败: {}", e.getMessage());
             return false;
