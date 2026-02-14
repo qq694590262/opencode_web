@@ -17,8 +17,8 @@
       </div>
     </aside>
 
-    <!-- 折叠按钮 - 在侧边栏外上方紧贴 -->
-    <button v-if="sidebarCollapsed" class="sidebar-toggle" @click="toggleSidebar">
+    <!-- 折叠按钮 - 始终显示，在侧边栏外上方紧贴 -->
+    <button class="sidebar-toggle" @click="toggleSidebar">
       <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
         <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
@@ -421,30 +421,30 @@ export default {
   border-right: none;
 }
 
-/* 折叠按钮 - 在侧边栏外上方紧贴 */
+/* 折叠按钮 - 在侧边栏外右侧紧贴 */
 .sidebar-toggle {
   position: absolute;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   left: 220px;
-  width: 24px;
-  height: 64px;
+  width: 20px;
+  height: 48px;
   background: #ffffff;
   border: none;
-  border-right: 1px solid #e4e7ed;
+  border-left: 1px solid #e4e7ed;
   color: #606266;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0 6px 6px 0;
+  border-radius: 6px 0 0 6px;
   transition: all 0.25s ease;
   z-index: 20;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar.collapsed + .sidebar-toggle {
+.sidebar.collapsed ~ .sidebar-toggle {
   left: 0;
-  box-shadow: none;
 }
 
 .sidebar-toggle:hover {
