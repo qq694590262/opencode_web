@@ -5,15 +5,6 @@
       <div class="brand">
         <span class="brand-icon">🏢</span>
         <span v-if="!sidebarCollapsed" class="brand-text">企业管理系统</span>
-        <!-- 折叠按钮 - 在品牌标题右边 -->
-        <button class="sidebar-toggle" @click="toggleSidebar">
-          <svg v-if="sidebarCollapsed" width="16" height="14" viewBox="0 0 16 14" fill="none">
-            <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <svg v-else width="16" height="14" viewBox="0 0 16 14" fill="none">
-            <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
       </div>
       
       <SideMenu v-if="!sidebarCollapsed" :menu="MENU" />
@@ -26,7 +17,14 @@
       </div>
     </aside>
 
-    <section class="main-content"> :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+    <!-- 折叠按钮 - 在侧边栏外上方紧贴 -->
+    <button v-if="sidebarCollapsed" class="sidebar-toggle" @click="toggleSidebar">
+      <svg width="16" height="14" viewBox="0 0 16 14" fill="none">
+        <path d="M1 7H15M1 1H15M1 13H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    
+    <section class="main-content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
       <header class="topbar">
         <div class="breadcrumb">
           <span class="home-icon">🏠</span>
@@ -417,34 +415,41 @@ export default {
 }
 
 .sidebar.collapsed {
-  width: 64px;
-  min-width: 64px;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-right: none;
 }
 
-.sidebar.collapsed .sidebar-footer {
-  display: none;
-}
-
-/* 折叠按钮 - 在品牌区域内 */
+/* 折叠按钮 - 在侧边栏外上方紧贴 */
 .sidebar-toggle {
-  margin-left: auto;
-  width: 28px;
-  height: 28px;
-  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 220px;
+  width: 24px;
+  height: 64px;
+  background: #ffffff;
   border: none;
-  color: #909399;
+  border-right: 1px solid #e4e7ed;
+  color: #606266;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.25s ease;
+  z-index: 20;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar.collapsed + .sidebar-toggle {
+  left: 0;
+  box-shadow: none;
 }
 
 .sidebar-toggle:hover {
-  background: #f5f7fa;
-  color: #409eff;
+  background: #409eff;
+  color: #fff;
 }
 
 /* 品牌标识 */
@@ -473,15 +478,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
-}
-
-.sidebar.collapsed .brand {
-  justify-content: center;
-  padding: 18px 8px;
-}
-
-.sidebar.collapsed .brand-text {
-  display: none;
 }
 
 /* 侧边栏底部 */
