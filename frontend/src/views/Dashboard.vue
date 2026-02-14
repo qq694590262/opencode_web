@@ -19,8 +19,13 @@
 
     <!-- 折叠按钮 - 始终显示，在侧边栏外右侧紧贴 -->
     <button class="sidebar-toggle" @click="toggleSidebar">
-      <svg width="18" height="16" viewBox="0 0 18 16" fill="none">
-        <path d="M2 8H16M2 2H16M2 14H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <!-- 展开时显示左箭头 -->
+      <svg v-if="!sidebarCollapsed" class="toggle-arrow" width="10" height="16" viewBox="0 0 10 16" fill="none">
+        <path d="M8 12L4 8L8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <!-- 折叠时显示右箭头 -->
+      <svg v-else class="toggle-arrow" width="10" height="16" viewBox="0 0 10 16" fill="none">
+        <path d="M2 4L6 8L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
     
@@ -427,29 +432,35 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   left: 220px;
-  width: 24px;
-  height: 56px;
+  width: 22px;
+  height: 52px;
   background: #ffffff;
   border: none;
   border-left: 1px solid #e4e7ed;
-  color: #606266;
+  border-right: 1px solid #e4e7ed;
+  color: #909399;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px 0 0 6px;
   transition: all 0.25s ease;
   z-index: 20;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-toggle .toggle-arrow {
+  transition: transform 0.2s ease;
 }
 
 .sidebar.collapsed ~ .sidebar-toggle {
   left: 0;
+  border-left: 1px solid #e4e7ed;
+  border-right: none;
 }
 
 .sidebar-toggle:hover {
   background: #409eff;
   color: #fff;
+  border-color: #409eff;
 }
 
 /* 品牌标识 */
