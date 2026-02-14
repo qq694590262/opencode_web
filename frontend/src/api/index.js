@@ -80,8 +80,20 @@ export const documentApi = {
 }
 
 export const logApi = {
-  getAll: () => request('/logs'),
+  getAll: () => request('/logs/all'),
   getRecent: (limit = 10) => request(`/logs/recent?limit=${limit}`),
+  getPage: (pageNum = 1, pageSize = 10, params = {}) => {
+    const queryParams = new URLSearchParams({
+      pageNum,
+      pageSize,
+      ...params
+    }).toString()
+    return request(`/logs?${queryParams}`)
+  },
+  search: (keyword) => request(`/logs/search?keyword=${encodeURIComponent(keyword)}`),
+  getStatistics: () => request('/logs/statistics'),
+  deleteLogs: (ids) => request(`/logs/${ids.join(',')}`, { method: 'DELETE' }),
+  clearLogs: () => request('/logs/clear', { method: 'DELETE' }),
 }
 
 export const wikiApi = {

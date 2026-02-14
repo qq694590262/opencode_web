@@ -356,12 +356,14 @@ export default {
 
     const getOperationType = (operation) => {
       if (!operation) return 'OTHER'
-      if (operation.includes('登录')) return 'LOGIN'
-      if (operation.includes('创建') || operation.includes('新增')) return 'CREATE'
-      if (operation.includes('编辑') || operation.includes('修改') || operation.includes('更新')) return 'UPDATE'
-      if (operation.includes('删除')) return 'DELETE'
-      if (operation.includes('导出')) return 'EXPORT'
-      if (operation.includes('系统')) return 'SYSTEM'
+      const op = operation.toLowerCase()
+      if (op.includes('login') || op.includes('auth')) return 'LOGIN'
+      if (op.includes('create') || op.includes('save') || op.includes('add')) return 'CREATE'
+      if (op.includes('update') || op.includes('edit')) return 'UPDATE'
+      if (op.includes('delete') || op.includes('remove')) return 'DELETE'
+      if (op.includes('get') || op.includes('list') || op.includes('query') || op.includes('find')) return 'QUERY'
+      if (op.includes('export')) return 'EXPORT'
+      if (op.includes('system')) return 'SYSTEM'
       return 'OTHER'
     }
 

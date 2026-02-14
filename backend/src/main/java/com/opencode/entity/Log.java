@@ -23,6 +23,7 @@ public class Log {
     
     private Integer status;
     
+    @TableField("error_msg")
     private String errorMsg;
     
     private Long duration;
