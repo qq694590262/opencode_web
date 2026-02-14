@@ -102,6 +102,7 @@ export const dashboardApi = {
   getActivities: () => request('/dashboard/activities'),
   getQuickLinks: () => request('/dashboard/quick-links'),
   getCharts: () => request('/dashboard/charts'),
+  getSystemInfo: () => request('/dashboard/system-info'),
 }
 
 export const calendarApi = {
@@ -119,4 +120,34 @@ export const reportApi = {
   create: (data) => request('/reports', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => request(`/reports/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => request(`/reports/${id}`, { method: 'DELETE' }),
+}
+
+export const uploadApi = {
+  uploadImage: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return request('/upload/image', {
+      method: 'POST',
+      body: formData,
+      headers: {} // 让浏览器自动设置 Content-Type
+    })
+  },
+  uploadDocument: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return request('/upload/document', {
+      method: 'POST',
+      body: formData,
+      headers: {}
+    })
+  },
+  uploadAvatar: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return request('/upload/avatar', {
+      method: 'POST',
+      body: formData,
+      headers: {}
+    })
+  },
 }

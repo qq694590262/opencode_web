@@ -146,6 +146,38 @@ public class DashboardController {
         return data;
     }
     
+    @GetMapping("/system-info")
+    public Result<Map<String, Object>> getSystemInfo() {
+        Map<String, Object> data = new HashMap<>();
+        
+        // 系统基本信息
+        data.put("status", "运行中");
+        data.put("uptime", "15天6小时");
+        data.put("onlineUsers", 12);
+        data.put("dbStatus", "正常");
+        
+        // 资源使用情况（模拟数据）
+        data.put("cpuUsage", 45);
+        data.put("memoryUsage", 62);
+        data.put("memoryUsed", "4.2");
+        data.put("memoryTotal", "8");
+        data.put("diskUsage", 38);
+        data.put("diskUsed", "76");
+        data.put("diskTotal", "200");
+        data.put("jvmUsage", 55);
+        data.put("jvmUsed", "512");
+        data.put("jvmTotal", "1024");
+        
+        // 系统版本信息
+        data.put("version", "v1.0.0");
+        data.put("javaVersion", System.getProperty("java.version"));
+        data.put("os", System.getProperty("os.name"));
+        data.put("database", "MySQL 8.0.33");
+        data.put("timezone", "Asia/Shanghai");
+        
+        return Result.success(data);
+    }
+    
     private String formatTimeAgo(LocalDateTime time) {
         if (time == null) return "";
         
