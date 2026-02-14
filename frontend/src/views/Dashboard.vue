@@ -547,11 +547,6 @@ export default {
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(14, 165, 233, 0.1);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-}
 
 /* 面包屑 */
 .breadcrumb {
