@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.opencode.entity.Log;
 import com.opencode.mapper.LogMapper;
 import com.opencode.service.LogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogService {
     
@@ -31,13 +33,18 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean saveLog(Log log) {
-        if (log.getCreateTime() == null) {
-            log.setCreateTime(LocalDateTime.now());
+        try {
+            if (log.getCreateTime() == null) {
+                log.setCreateTime(LocalDateTime.now());
+            }
+            if (log.getStatus() == null) {
+                log.setStatus(1);
+            }
+            return this.save(log);
+        } catch (Exception e) {
+            log.error("保存日志失败: {}", e.getMessage());
+            return false;
         }
-        if (log.getStatus() == null) {
-            log.setStatus(1);
-        }
-        return this.save(log);
     }
     
     @Override

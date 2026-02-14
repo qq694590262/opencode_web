@@ -28,7 +28,7 @@ public class LogAspect {
     private final LogService logService;
     private final ObjectMapper objectMapper;
     
-    @Pointcut("execution(* com.opencode.controller..*.*(..))")
+    @Pointcut("execution(* com.opencode.controller..*.*(..)) && !execution(* com.opencode.controller.LogController.*(..))")
     public void logPointcut() {}
     
     @Around("logPointcut()")
