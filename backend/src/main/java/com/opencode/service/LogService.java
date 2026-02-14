@@ -11,7 +11,7 @@ import java.util.List;
 public interface LogService extends IService<Log> {
     List<Log> getAllLogs();
     List<Log> getRecentLogs(int limit);
-    boolean saveLog(Log log);
+    boolean saveLog(Log logEntity);
     Page<Log> getLogsPage(int pageNum, int pageSize, String username, String operation, 
                          Integer status, LocalDateTime startTime, LocalDateTime endTime);
     List<Log> searchLogs(String keyword);

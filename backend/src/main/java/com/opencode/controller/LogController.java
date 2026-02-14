@@ -89,9 +89,9 @@ public class LogController {
     }
     
     @PostMapping
-    public Result<Boolean> createLog(@RequestBody Log log) {
+    public Result<Boolean> createLog(@RequestBody Log logEntity) {
         try {
-            return Result.success(logService.saveLog(log));
+            return Result.success(logService.saveLog(logEntity));
         } catch (Exception e) {
             log.error("创建日志失败: {}", e.getMessage());
             return Result.error("创建日志失败");

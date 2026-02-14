@@ -50,27 +50,27 @@ public class LogAspect {
         
         String operation = className + "." + methodName;
         
-        Log log = new Log();
-        log.setMethod(httpMethod + ":" + operation);
-        log.setIp(ip);
-        log.setParams(params);
-        log.setUsername(username);
-        log.setCreateTime(LocalDateTime.now());
+        Log logEntity = new Log();
+        logEntity.setMethod(httpMethod + ":" + operation);
+        logEntity.setIp(ip);
+        logEntity.setParams(params);
+        logEntity.setUsername(username);
+        logEntity.setCreateTime(LocalDateTime.now());
         
         Object result = null;
         try {
             result = point.proceed();
-            log.setStatus(1);
+            logEntity.setStatus(1);
         } catch (Exception e) {
-            log.setStatus(0);
-            log.setErrorMsg(e.getMessage());
+            logEntity.setStatus(0);
+            logEntity.setErrorMsg(e.getMessage());
             throw e;
         } finally {
             long duration = System.currentTimeMillis() - startTime;
-            log.setDuration(duration);
+            logEntity.setDuration(duration);
             
             try {
-                logService.saveLog(log);
+                logService.saveLog(logEntity);
             } catch (Exception e) {
                 log.error("保存操作日志失败: {}", e.getMessage());
             }
