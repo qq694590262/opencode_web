@@ -132,6 +132,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { dashboardApi } from '../api'
 import { showToast } from '../components/Toast.vue'
 import { showConfirm } from '../components/ConfirmDialog.vue'
+import { searchWithPinyin, getPinyinInitials } from '../utils/pinyin.js'
 
 export default {
   name: 'Dashboard',
@@ -186,14 +187,27 @@ export default {
       return items
     })
     
-    // 过滤搜索结果
+    // 过滤搜索结果（支持拼音首字母搜索）
     const filteredSearchResults = computed(() => {
       if (!searchQuery.value.trim()) return []
       const query = searchQuery.value.toLowerCase()
-      return searchIndex.value.filter(item => 
-        item.label.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query)
-      ).slice(0, 8)
+      
+      return searchIndex.value.filter(item => {
+        // 直接匹配标签和分类
+        if (item.label.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)) {
+          return true
+        }
+        
+        // 拼音首字母匹配
+        const labelPinyin = getPinyinInitials(item.label).toLowerCase()
+        const categoryPinyin = getPinyinInitials(item.category).toLowerCase()
+        const pathPinyin = getPinyinInitials(item.path).toLowerCase()
+        
+        return labelPinyin.includes(query) ||
+               categoryPinyin.includes(query) ||
+               pathPinyin.includes(query)
+      }).slice(0, 8)
     })
     
     // 当前页面标题
