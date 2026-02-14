@@ -280,6 +280,22 @@ SELECT * FROM (VALUES ROW('新手入门', '系统使用入门指南和常见问�
                       ROW('设计规范', 'UI设计规范、图标库、配色方案', '🎨', 22)) AS tmp(name, description, icon, article_count)
 WHERE NOT EXISTS (SELECT 1 FROM sys_wiki_category LIMIT 1);
 
+-- 插入知识库文章（仅在sys_wiki_article表为空时）
+INSERT INTO sys_wiki_article (category_id, title, summary, content, author, view_count, like_count)
+SELECT * FROM (VALUES ROW(1, '欢迎使用 OpenCode 企业管理系统', '系统介绍和快速入门指南', 'OpenCode 是一个功能强大的企业管理系统，包含项目管理、任务跟踪、文档管理等多个模块。本文将介绍系统的基本使用方法...', '系统管理员', 156, 23),
+                      ROW(2, 'Vue3 Composition API 最佳实践', 'Vue3 组合式API的使用技巧和注意事项', 'Composition API 是 Vue3 的重要特性，本文将介绍如何在项目中正确使用 setup 函数、ref、reactive 等核心概念...', '张三', 89, 15),
+                      ROW(2, '前端性能优化指南', '提升前端应用性能的实用技巧', '性能优化是前端开发的重要课题。本文将从代码分割、懒加载、缓存策略等多个方面介绍如何提升应用性能...', '李四', 67, 12),
+                      ROW(3, 'Spring Boot 3.0 新特性详解', '深入了解 Spring Boot 3.0 的主要更新', 'Spring Boot 3.0 带来了许多激动人心的新特性，包括对 Jakarta EE 9 的支持、原生镜像支持等...', '王五', 134, 28),
+                      ROW(3, 'MyBatis-Plus 使用教程', '快速上手 MyBatis-Plus 插件', 'MyBatis-Plus 是 MyBatis 的增强工具，可以极大地简化数据库操作。本文将介绍常用的 CRUD 操作...', '赵六', 98, 19),
+                      ROW(4, '产品需求文档编写规范', '如何编写清晰完整的产品需求文档', '一份好的 PRD 是项目成功的基础。本文将介绍 PRD 的结构、编写技巧和注意事项...', '钱七', 45, 8),
+                      ROW(5, 'Docker 容器化部署指南', '使用 Docker 部署应用的完整流程', 'Docker 是现代应用部署的标准工具。本文将介绍 Dockerfile 编写、镜像构建和容器运行的完整流程...', '孙八', 78, 14),
+                      ROW(6, '自动化测试实践', '构建可靠的自动化测试体系', '自动化测试是保证代码质量的重要手段。本文将介绍单元测试、集成测试和端到端测试的实践方法...', '周九', 56, 10),
+                      ROW(7, '常见登录问题解决方案', '解决系统登录相关的常见问题', '本文汇总了用户在使用系统过程中遇到的登录问题及其解决方案，包括密码错误、账号锁定等情况...', '吴十', 234, 45),
+                      ROW(8, '敏捷开发最佳实践', '团队协作和敏捷开发的实战经验', '敏捷开发强调快速迭代和持续交付。本文将分享我们团队在实施敏捷开发过程中的经验和教训...', '郑十一', 112, 22),
+                      ROW(9, 'RESTful API 设计规范', '设计优雅易用的 RESTful 接口', '好的 API 设计能够提高开发效率和用户体验。本文将介绍 RESTful API 的设计原则和最佳实践...', '董方', 145, 31),
+                      ROW(10, 'UI设计系统规范', '建立一致的视觉设计系统', '设计系统是保证产品视觉一致性的关键。本文将介绍颜色、字体、间距等设计规范的制定方法...', '西门', 67, 13)) AS tmp(category_id, title, summary, content, author, view_count, like_count)
+WHERE NOT EXISTS (SELECT 1 FROM sys_wiki_article LIMIT 1);
+
 -- 插入12个日程（仅在sys_calendar表为空时）
 INSERT INTO sys_calendar (title, description, start_time, end_time, user_id, type, color)
 SELECT * FROM (VALUES ROW('周一晨会', '部门周例会，汇报上周工作和本周计划', DATE_ADD(NOW(), INTERVAL 1 HOUR), DATE_ADD(NOW(), INTERVAL 2 HOUR), 1, 'meeting', '#0ea5e9'),
