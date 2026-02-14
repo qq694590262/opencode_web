@@ -81,9 +81,11 @@ CREATE TABLE IF NOT EXISTS sys_document (
 CREATE TABLE IF NOT EXISTS sys_log (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50),
-    operation VARCHAR(100),
+    operation VARCHAR(200),
+    module VARCHAR(50),
     ip VARCHAR(50),
-    method VARCHAR(50),
+    user_agent VARCHAR(500),
+    method VARCHAR(100),
     params TEXT,
     status INT DEFAULT 1,
     error_msg TEXT,

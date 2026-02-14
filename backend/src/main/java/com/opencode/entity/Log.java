@@ -16,7 +16,11 @@ public class Log {
     
     private String operation;
     
+    private String module;
+    
     private String ip;
+    
+    private String userAgent;
     
     private String method;
     
