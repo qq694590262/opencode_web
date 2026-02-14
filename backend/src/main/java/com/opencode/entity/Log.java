@@ -1,6 +1,7 @@
 package com.opencode.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class Log {
     
     private Integer status;
     
+    @JsonProperty("errorMsg")
     @TableField("error_msg")
     private String errorMsg;
     
