@@ -18,8 +18,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Aspect
@@ -29,44 +27,6 @@ public class LogAspect {
     
     private final LogService logService;
     private final ObjectMapper objectMapper;
-    
-    private static final Map<String, String> MODULE_MAP = new HashMap<>();
-    private static final Map<String, String> ACTION_MAP = new HashMap<>();
-    
-    static {
-        MODULE_MAP.put("AuthController", "系统登录");
-        MODULE_MAP.put("UserController", "用户管理");
-        MODULE_MAP.put("RoleController", "角色管理");
-        MODULE_MAP.put("ProjectController", "项目管理");
-        MODULE_MAP.put("TaskController", "任务管理");
-        MODULE_MAP.put("DocumentController", "文档管理");
-        MODULE_MAP.put("WikiController", "知识库");
-        MODULE_MAP.put("CalendarController", "日程管理");
-        MODULE_MAP.put("ReportController", "报表管理");
-        MODULE_MAP.put("DashboardController", "仪表盘");
-        MODULE_MAP.put("FileUploadController", "文件上传");
-        MODULE_MAP.put("SettingsController", "系统设置");
-        
-        ACTION_MAP.put("login", "用户登录");
-        ACTION_MAP.put("logout", "用户登出");
-        ACTION_MAP.put("create", "新增");
-        ACTION_MAP.put("save", "新增");
-        ACTION_MAP.put("add", "新增");
-        ACTION_MAP.put("update", "编辑");
-        ACTION_MAP.put("edit", "编辑");
-        ACTION_MAP.put("delete", "删除");
-        ACTION_MAP.put("remove", "删除");
-        ACTION_MAP.put("get", "查看");
-        ACTION_MAP.put("list", "查询");
-        ACTION_MAP.put("query", "查询");
-        ACTION_MAP.put("find", "查询");
-        ACTION_MAP.put("page", "分页查询");
-        ACTION_MAP.put("all", "获取全部");
-        ACTION_MAP.put("export", "导出");
-        ACTION_MAP.put("import", "导入");
-        ACTION_MAP.put("upload", "上传");
-        ACTION_MAP.put("download", "下载");
-    }
     
     @Pointcut("execution(* com.opencode.controller..*.*(..)) && !execution(* com.opencode.controller.LogController.*(..))")
     public void logPointcut() {}
@@ -85,12 +45,12 @@ public class LogAspect {
         String methodName = method.getName();
         String httpMethod = request != null ? request.getMethod() : "UNKNOWN";
         String ip = getIpAddress(request);
-        String userAgent = getUserAgent(request);
+        String userAgent = request != null ? request.getHeader("User-Agent") : "";
         String params = getParams(point);
         String username = getUsername(request);
         
-        String module = MODULE_MAP.getOrDefault(className, className.replace("Controller", ""));
-        String action = getActionDescription(methodName, httpMethod);
+        String module = getModule(className);
+        String action = getAction(methodName, httpMethod);
         String operation = module + " - " + action;
         
         Log logEntity = new Log();
@@ -125,22 +85,38 @@ public class LogAspect {
         return result;
     }
     
-    private String getActionDescription(String methodName, String httpMethod) {
-        String lowerMethod = methodName.toLowerCase();
+    private String getModule(String className) {
+        if ("AuthController".equals(className)) return "系统登录";
+        if ("UserController".equals(className)) return "用户管理";
+        if ("RoleController".equals(className)) return "角色管理";
+        if ("ProjectController".equals(className)) return "项目管理";
+        if ("TaskController".equals(className)) return "任务管理";
+        if ("DocumentController".equals(className)) return "文档管理";
+        if ("WikiController".equals(className)) return "知识库";
+        if ("CalendarController".equals(className)) return "日程管理";
+        if ("ReportController".equals(className)) return "报表管理";
+        if ("DashboardController".equals(className)) return "仪表盘";
+        if ("FileUploadController".equals(className)) return "文件上传";
+        if ("SettingsController".equals(className)) return "系统设置";
+        if ("LogController".equals(className)) return "日志管理";
+        return className.replace("Controller", "");
+    }
+    
+    private String getAction(String methodName, String httpMethod) {
+        String name = methodName.toLowerCase();
         
-        if ("login".equals(lowerMethod) || "logout".equals(lowerMethod)) {
-            return ACTION_MAP.get(lowerMethod);
-        }
+        if ("login".equals(name)) return "用户登录";
+        if ("logout".equals(name)) return "用户登出";
+        if (name.contains("create") || name.contains("save") || name.contains("add")) return "新增";
+        if (name.contains("update") || name.contains("edit")) return "编辑";
+        if (name.contains("delete") || name.contains("remove")) return "删除";
+        if (name.contains("get") || name.contains("list") || name.contains("query") || name.contains("find") || name.contains("page") || name.contains("all")) return "查询";
+        if (name.contains("export")) return "导出";
+        if (name.contains("import")) return "导入";
+        if (name.contains("upload")) return "上传";
+        if (name.contains("download")) return "下载";
         
-        for (Map.Entry<String, String> entry : ACTION_MAP.entrySet()) {
-            if (lowerMethod.contains(entry.getKey())) {
-                return entry.getValue();
-            }
-        }
-        
-        if ("GET".equalsIgnoreCase(httpMethod)) {
-            return "查看";
-        }
+        if ("GET".equalsIgnoreCase(httpMethod)) return "查看";
         
         return methodName;
     }
@@ -149,12 +125,6 @@ public class LogAspect {
         if (request == null) return "unknown";
         
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
@@ -169,21 +139,21 @@ public class LogAspect {
         return ip;
     }
     
-    private String getUserAgent(HttpServletRequest request) {
-        if (request == null) return "";
-        return request.getHeader("User-Agent");
-    }
-    
     private String getUsername(HttpServletRequest request) {
         if (request == null) return "anonymous";
+        
         Object username = request.getAttribute("username");
         if (username != null) {
             return username.toString();
         }
-        Object sessionUsername = request.getSession(false) != null ? request.getSession(false).getAttribute("username") : null;
-        if (sessionUsername != null) {
-            return sessionUsername.toString();
+        
+        if (request.getSession(false) != null) {
+            Object sessionUsername = request.getSession(false).getAttribute("username");
+            if (sessionUsername != null) {
+                return sessionUsername.toString();
+            }
         }
+        
         return "anonymous";
     }
     
@@ -194,20 +164,20 @@ public class LogAspect {
                 return "";
             }
             
-            Object[] filteredArgs = Arrays.stream(args)
-                .filter(arg -> arg != null && !(arg instanceof org.springframework.web.multipart.MultipartFile))
-                .filter(arg -> arg != null && !(arg instanceof org.springframework.web.multipart.MultipartFile[]))
-                .filter(arg -> !(arg instanceof org.springframework.http.HttpServletRequest))
-                .filter(arg -> !(arg instanceof org.springframework.http.HttpServletResponse))
+            Object[] filtered = Arrays.stream(args)
+                .filter(arg -> arg != null)
+                .filter(arg -> !arg.getClass().getName().contains("MultipartFile"))
+                .filter(arg -> !arg.getClass().getName().contains("HttpServletRequest"))
+                .filter(arg -> !arg.getClass().getName().contains("HttpServletResponse"))
                 .toArray();
             
-            if (filteredArgs.length == 0) {
+            if (filtered.length == 0) {
                 return "";
             }
             
-            return objectMapper.writeValueAsString(filteredArgs);
+            return objectMapper.writeValueAsString(filtered);
         } catch (Exception e) {
-            return "参数序列化失败";
+            return "参数获取失败";
         }
     }
 }
