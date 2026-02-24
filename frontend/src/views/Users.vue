@@ -1,115 +1,177 @@
 <template>
-  <div class="page-content">
+  <div class="page-container">
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h2>👥 用户列表</h2>
-      <p>管理系统用户账号</p>
-    </div>
-
-    <div class="toolbar">
-      <input type="text" v-model="searchQuery" placeholder="搜索用户..." class="search-input" @input="handleSearch" />
-      <button class="btn-primary" @click="showAddModal = true">+ 新增用户</button>
-    </div>
-
-    <div class="table-card">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>用户名</th>
-            <th>邮箱</th>
-            <th>角色</th>
-            <th>状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in filteredUsers" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>
-              <div class="user-cell">
-                <span class="avatar">👤</span>
-                {{ user.name || user.username }}
-              </div>
-            </td>
-            <td>{{ user.email }}</td>
-            <td><span class="role-tag">{{ user.role || '用户' }}</span></td>
-            <td>
-              <span class="status-tag" :class="user.status === 1 ? 'active' : 'inactive'">
-                {{ user.status === 1 ? '正常' : '禁用' }}
-              </span>
-            </td>
-            <td>
-              <button class="action-btn" @click="editUser(user)">编辑</button>
-              <button class="action-btn danger" @click="deleteUser(user)">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 添加/编辑用户弹窗 -->
-    <div v-if="showAddModal || showEditModal" class="modal-overlay" @click.self="closeModal">
-      <div class="modal">
-        <h3>{{ showEditModal ? '编辑用户' : '新增用户' }}</h3>
-        <form @submit.prevent="saveUser">
-          <div class="form-group">
-            <label>用户名</label>
-            <input v-model="formData.username" required />
-          </div>
-          <div class="form-group">
-            <label>姓名</label>
-            <input v-model="formData.name" />
-          </div>
-          <div class="form-group">
-            <label>邮箱</label>
-            <input v-model="formData.email" type="email" />
-          </div>
-          <div class="form-group">
-            <label>角色</label>
-            <select v-model="formData.role">
-              <option value="USER">用户</option>
-              <option value="ADMIN">管理员</option>
-              <option value="EDITOR">编辑</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>状态</label>
-            <select v-model="formData.status">
-              <option :value="1">正常</option>
-              <option :value="0">禁用</option>
-            </select>
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn-cancel" @click="closeModal">取消</button>
-            <button type="submit" class="btn-confirm">保存</button>
-          </div>
-        </form>
+      <div class="header-content">
+        <h2 class="page-title">
+          <el-icon><User /></el-icon>
+          用户管理
+        </h2>
+        <p class="page-desc">管理系统用户账号</p>
       </div>
+      <el-button type="primary" :icon="Plus" @click="openAddDialog">新增用户</el-button>
     </div>
+
+    <!-- 搜索栏 -->
+    <div class="search-bar">
+      <el-input
+        v-model="searchQuery"
+        placeholder="搜索用户名、邮箱..."
+        :prefix-icon="Search"
+        clearable
+        class="search-input"
+        @input="handleSearch"
+      />
+    </div>
+
+    <!-- 用户表格 -->
+    <el-table 
+      :data="filteredUsers" 
+      stripe 
+      border
+      class="user-table"
+      v-loading="loading"
+    >
+      <el-table-column prop="id" label="ID" width="80" align="center" />
+      
+      <el-table-column label="用户" min-width="150">
+        <template #default="{ row }">
+          <div class="user-info">
+            <el-avatar :size="36" :style="getAvatarStyle(row)">
+              {{ (row.name || row.username || 'U')[0].toUpperCase() }}
+            </el-avatar>
+            <div class="user-detail">
+              <span class="user-name">{{ row.name || row.username }}</span>
+              <span class="user-username">@{{ row.username }}</span>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="email" label="邮箱" min-width="180" />
+      
+      <el-table-column label="角色" width="120" align="center">
+        <template #default="{ row }">
+          <el-tag :type="getRoleType(row.role)" effect="light" round>
+            {{ getRoleText(row.role) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      
+      <el-table-column label="状态" width="100" align="center">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="dark" round>
+            {{ row.status === 1 ? '正常' : '禁用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      
+      <el-table-column label="操作" width="160" align="center" fixed="right">
+        <template #default="{ row }">
+          <el-button type="primary" size="small" text @click="editUser(row)">
+            <el-icon><Edit /></el-icon>
+            编辑
+          </el-button>
+          <el-button type="danger" size="small" text @click="deleteUser(row)">
+            <el-icon><Delete /></el-icon>
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 用户表单弹窗 -->
+    <el-dialog 
+      v-model="dialogVisible" 
+      :title="isEdit ? '编辑用户' : '新增用户'"
+      width="500px"
+      :close-on-click-modal="false"
+    >
+      <el-form 
+        ref="formRef"
+        :model="formData" 
+        :rules="rules"
+        label-width="80px"
+        class="user-form"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="formData.username" placeholder="请输入用户名" />
+        </el-form-item>
+        
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="formData.name" placeholder="请输入姓名" />
+        </el-form-item>
+        
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="formData.email" placeholder="请输入邮箱" />
+        </el-form-item>
+        
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="formData.role" placeholder="请选择角色" style="width: 100%">
+            <el-option label="管理员" value="ADMIN" />
+            <el-option label="编辑" value="EDITOR" />
+            <el-option label="用户" value="USER" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="状态" prop="status">
+          <el-switch
+            v-model="formData.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="正常"
+            inactive-text="禁用"
+          />
+        </el-form-item>
+      </el-form>
+      
+      <template #footer>
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" :loading="saving" @click="saveUser">
+          {{ saving ? '保存中...' : '保存' }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { userApi } from '../api'
-import { showToast } from '../components/Toast.vue'
-import { showConfirm } from '../components/ConfirmDialog.vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { User, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
 
 export default {
   name: 'Users',
   setup() {
+    const loading = ref(false)
+    const saving = ref(false)
     const users = ref([])
     const searchQuery = ref('')
-    const showAddModal = ref(false)
-    const showEditModal = ref(false)
+    const dialogVisible = ref(false)
+    const isEdit = ref(false)
+    const formRef = ref(null)
+    
     const formData = ref({
+      id: null,
       username: '',
       name: '',
       email: '',
       role: 'USER',
       status: 1
     })
-
+    
+    const rules = {
+      username: [
+        { required: true, message: '请输入用户名', trigger: 'blur' }
+      ],
+      email: [
+        { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+      ]
+    }
+    
+    const avatarColors = ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399', '#C71585', '#20B2AA', '#FF8C00']
+    
     const filteredUsers = computed(() => {
       if (!searchQuery.value) return users.value
       const query = searchQuery.value.toLowerCase()
@@ -119,8 +181,24 @@ export default {
         (user.email && user.email.toLowerCase().includes(query))
       )
     })
-
+    
+    const getAvatarStyle = (row) => {
+      const index = (row.username?.charCodeAt(0) || 0) % avatarColors.length
+      return { backgroundColor: avatarColors[index], color: '#fff' }
+    }
+    
+    const getRoleType = (role) => {
+      const types = { 'ADMIN': 'danger', 'EDITOR': 'warning', 'USER': 'info' }
+      return types[role] || 'info'
+    }
+    
+    const getRoleText = (role) => {
+      const texts = { 'ADMIN': '管理员', 'EDITOR': '编辑', 'USER': '用户' }
+      return texts[role] || '用户'
+    }
+    
     const loadUsers = async () => {
+      loading.value = true
       try {
         const res = await userApi.getAll()
         if (res.code === 200) {
@@ -128,65 +206,89 @@ export default {
         }
       } catch (error) {
         console.error('获取用户列表失败:', error)
-        showToast({ type: 'error', message: '获取用户列表失败: ' + (error.message || '未知错误') })
+        ElMessage.error('获取用户列表失败')
+      } finally {
+        loading.value = false
       }
     }
-
+    
     const handleSearch = () => {
-      // 搜索已通过计算属性实现
+      // 搜索通过计算属性实现
     }
-
+    
+    const openAddDialog = () => {
+      isEdit.value = false
+      formData.value = {
+        id: null,
+        username: '',
+        name: '',
+        email: '',
+        role: 'USER',
+        status: 1
+      }
+      dialogVisible.value = true
+    }
+    
     const editUser = (user) => {
+      isEdit.value = true
       formData.value = { ...user }
-      showEditModal.value = true
+      dialogVisible.value = true
     }
-
+    
     const deleteUser = async (user) => {
-      const confirmed = await showConfirm({
-        title: '删除确认',
-        message: `确定要删除用户 "${user.name || user.username}" 吗？此操作不可恢复。`,
-        type: 'danger',
-        confirmText: '删除',
-        cancelText: '取消'
-      })
-      
-      if (!confirmed) return
-      
       try {
+        await ElMessageBox.confirm(
+          `确定要删除用户 "${user.name || user.username}" 吗？此操作不可恢复。`,
+          '删除确认',
+          { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+        )
+        
         const res = await userApi.delete(user.id)
         if (res.code === 200) {
-          showToast({ type: 'success', message: '删除成功' })
+          ElMessage.success('删除成功')
           await loadUsers()
         }
       } catch (error) {
-        console.error('删除用户失败:', error)
-        showToast({ type: 'error', message: '删除失败: ' + (error.message || '未知错误') })
+        if (error !== 'cancel') {
+          console.error('删除用户失败:', error)
+          ElMessage.error('删除失败')
+        }
       }
     }
-
+    
     const saveUser = async () => {
-      try {
-        let res
-        if (showEditModal.value) {
-          res = await userApi.update(formData.value.id, formData.value)
-        } else {
-          res = await userApi.create(formData.value)
+      if (!formRef.value) return
+      
+      await formRef.value.validate(async (valid) => {
+        if (!valid) return
+        
+        saving.value = true
+        try {
+          let res
+          if (isEdit.value) {
+            res = await userApi.update(formData.value.id, formData.value)
+          } else {
+            res = await userApi.create(formData.value)
+          }
+          
+          if (res.code === 200) {
+            ElMessage.success(isEdit.value ? '更新成功' : '创建成功')
+            closeDialog()
+            await loadUsers()
+          }
+        } catch (error) {
+          console.error('保存用户失败:', error)
+          ElMessage.error('保存失败')
+        } finally {
+          saving.value = false
         }
-        if (res.code === 200) {
-          showToast({ type: 'success', message: showEditModal.value ? '用户更新成功' : '用户创建成功' })
-          closeModal()
-          await loadUsers()
-        }
-      } catch (error) {
-        console.error('保存用户失败:', error)
-        showToast({ type: 'error', message: '保存失败: ' + (error.message || '未知错误') })
-      }
+      })
     }
-
-    const closeModal = () => {
-      showAddModal.value = false
-      showEditModal.value = false
+    
+    const closeDialog = () => {
+      dialogVisible.value = false
       formData.value = {
+        id: null,
         username: '',
         name: '',
         email: '',
@@ -194,140 +296,117 @@ export default {
         status: 1
       }
     }
-
+    
     onMounted(loadUsers)
-
+    
     return {
+      loading,
+      saving,
       users,
-      filteredUsers,
       searchQuery,
-      showAddModal,
-      showEditModal,
+      filteredUsers,
+      dialogVisible,
+      isEdit,
+      formRef,
       formData,
+      rules,
+      getAvatarStyle,
+      getRoleType,
+      getRoleText,
       handleSearch,
+      openAddDialog,
       editUser,
       deleteUser,
       saveUser,
-      closeModal
+      closeDialog,
+      User,
+      Plus,
+      Search,
+      Edit,
+      Delete
     }
   }
 }
 </script>
 
 <style scoped>
-.page-content { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.page-container {
+  animation: fadeIn 0.3s ease;
+}
 
-.page-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-.page-header h2 { font-size: 24px; font-weight: 700; color: #0c4a6e; margin: 0; }
-.page-header p { font-size: 14px; color: #64748b; margin: 8px 0 0 0; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-.toolbar { display: flex; gap: 16px; margin-bottom: 20px; }
-.search-input { flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.3s; }
-.search-input:focus { border-color: #0ea5e9; }
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
 
-.btn-primary { padding: 12px 24px; border: none; border-radius: 10px; background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
+.header-content {
+  display: flex;
+  flex-direction: column;
+}
 
-.table-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto; }
-
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th { text-align: left; padding: 14px 16px; font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 2px solid #f1f5f9; }
-.data-table td { padding: 16px; font-size: 14px; color: #1e293b; border-bottom: 1px solid #f1f5f9; }
-.data-table tr:hover { background: #f8fafc; }
-
-.user-cell { display: flex; align-items: center; gap: 10px; }
-.avatar { width: 36px; height: 36px; border-radius: 10px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; }
-
-.role-tag { padding: 4px 12px; border-radius: 20px; background: #e0f2fe; color: #0284c7; font-size: 12px; font-weight: 500; }
-.status-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-.status-tag.active { background: #dcfce7; color: #16a34a; }
-.status-tag.inactive { background: #fee2e2; color: #dc2626; }
-
-.action-btn { padding: 6px 12px; margin-right: 8px; border: none; border-radius: 6px; background: #f1f5f9; color: #475569; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.action-btn:hover { background: #e0f2fe; color: #0ea5e9; }
-.action-btn.danger:hover { background: #fee2e2; color: #dc2626; }
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
+.page-title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
 }
 
-.modal {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 85vh;
-  overflow-y: auto;
+.page-title .el-icon {
+  color: #409EFF;
 }
 
-.modal h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  color: #1e293b;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+.page-desc {
   font-size: 14px;
-  outline: none;
+  color: #909399;
+  margin: 6px 0 0 0;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #0ea5e9;
+.search-bar {
+  margin-bottom: 20px;
 }
 
-.modal-actions {
+.search-input {
+  max-width: 320px;
+}
+
+.user-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.user-info {
   display: flex;
+  align-items: center;
   gap: 12px;
-  justify-content: flex-end;
-  margin-top: 20px;
 }
 
-.btn-cancel {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: #f1f5f9;
-  color: #475569;
-  font-size: 14px;
-  cursor: pointer;
+.user-detail {
+  display: flex;
+  flex-direction: column;
 }
 
-.btn-confirm {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
-  color: #fff;
+.user-name {
   font-size: 14px;
-  cursor: pointer;
+  font-weight: 500;
+  color: #303133;
+}
+
+.user-username {
+  font-size: 12px;
+  color: #909399;
+}
+
+.user-form :deep(.el-form-item__label) {
+  font-weight: 500;
 }
 </style>
