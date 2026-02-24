@@ -1,5 +1,18 @@
 const API_BASE = 'http://localhost:8080/api'
 
+// 跳转登录页面的函数
+function redirectToLogin() {
+  // 清除本地存储的用户信息
+  localStorage.removeItem('userInfo')
+  localStorage.removeItem('token')
+  // 跳转到登录页面
+  window.location.href = '#/login'
+  // 如果当前不是登录页，则刷新页面
+  if (!window.location.hash.includes('/login')) {
+    window.location.reload()
+  }
+}
+
 async function request(url, options = {}) {
   const defaultOptions = {
     credentials: 'include',
@@ -9,7 +22,23 @@ async function request(url, options = {}) {
   }
   
   const response = await fetch(`${API_BASE}${url}`, { ...defaultOptions, ...options })
+  
+  // 处理401未授权响应
+  if (response.status === 401) {
+    const data = await response.json()
+    console.warn('登录已过期，请重新登录')
+    redirectToLogin()
+    throw new Error(data.message || '请重新登录')
+  }
+  
   const data = await response.json()
+  
+  // 处理业务层面的未登录错误码
+  if (data.code === 401) {
+    console.warn('登录已过期，请重新登录')
+    redirectToLogin()
+    throw new Error(data.message || '请重新登录')
+  }
   
   if (!response.ok) {
     throw new Error(data.message || '请求失败')

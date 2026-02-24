@@ -233,7 +233,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import { getUserInfo, changePassword } from '../auth'
+import { getUserInfo, fetchUserInfo, changePassword } from '../auth'
 import { userApi } from '../api'
 import { showToast } from '../components/Toast.vue'
 
@@ -289,19 +289,18 @@ export default {
     })
 
     const loadUserInfo = async () => {
-      try {
-        const info = await getUserInfo()
-        if (info) {
-          userInfo.value = info
-          formData.value = { ...formData.value, ...info }
-        }
-        // 加载保存的头像颜色
-        const savedColor = localStorage.getItem('avatarColor')
-        if (savedColor) {
-          selectedColor.value = savedColor
-        }
-      } catch (error) {
-        console.error('获取用户信息失败:', error)
+      // 首先尝试从本地存储获取用户信息
+      let info = getUserInfo()
+      
+      // 如果本地没有，尝试从服务器获取
+      if (!info) {
+        info = await fetchUserInfo()
+      }
+      
+      if (info) {
+        userInfo.value = info
+        formData.value = { ...formData.value, ...info }
+      } else {
         // 使用模拟数据
         userInfo.value = {
           id: 1,
@@ -317,6 +316,12 @@ export default {
           lastLoginTime: new Date().toISOString()
         }
         formData.value = { ...userInfo.value }
+      }
+      
+      // 加载保存的头像颜色
+      const savedColor = localStorage.getItem('avatarColor')
+      if (savedColor) {
+        selectedColor.value = savedColor
       }
     }
 
