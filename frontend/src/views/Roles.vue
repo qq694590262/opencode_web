@@ -15,11 +15,11 @@
     <div class="roles-grid">
       <div class="role-card" v-for="role in filteredRoles" :key="role.id">
         <div class="role-header">
-          <span class="role-icon">{{ role.icon || '👤' }}</span>
+          <span class="role-icon">{{ role.code || '👤' }}</span>
           <h4>{{ role.name }}</h4>
         </div>
-        <p class="role-desc">{{ role.desc || role.description || '暂无描述' }}</p>
-        <div class="role-users">{{ role.count || 0 }} 人</div>
+        <p class="role-desc">{{ role.description || '暂无描述' }}</p>
+        <div class="role-users">{{ role.userCount || role.user_count || 0 }} 人</div>
         <div class="role-actions">
           <button class="btn-edit" @click="openEditModal(role)">编辑</button>
           <button class="btn-delete" @click="handleDelete(role)">删除</button>
@@ -33,12 +33,12 @@
         <h3>{{ isEditing ? '编辑角色' : '新增角色' }}</h3>
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <label>角色名称 *</label>
-            <input v-model="formData.name" required placeholder="请输入角色名称">
+            <label>角色编码 *</label>
+            <input v-model="formData.code" required placeholder="例如: ADMIN">
           </div>
           <div class="form-group">
-            <label>角色图标</label>
-            <input v-model="formData.icon" placeholder="例如: 👑">
+            <label>角色名称 *</label>
+            <input v-model="formData.name" required placeholder="请输入角色名称">
           </div>
           <div class="form-group">
             <label>角色描述</label>
@@ -65,8 +65,8 @@ const searchQuery = ref('')
 const showModal = ref(false)
 const isEditing = ref(false)
 const formData = ref({
+  code: '',
   name: '',
-  icon: '',
   description: ''
 })
 const editingId = ref(null)
@@ -104,7 +104,7 @@ const handleSearch = () => {
 const openAddModal = () => {
   isEditing.value = false
   editingId.value = null
-  formData.value = { name: '', icon: '', description: '' }
+  formData.value = { code: '', name: '', description: '' }
   showModal.value = true
 }
 
@@ -112,26 +112,28 @@ const openEditModal = (role) => {
   isEditing.value = true
   editingId.value = role.id
   formData.value = {
+    code: role.code || '',
     name: role.name || '',
-    icon: role.icon || '',
-    description: role.desc || role.description || ''
+    description: role.description || ''
   }
   showModal.value = true
 }
 
 const closeModal = () => {
   showModal.value = false
-  formData.value = { name: '', icon: '', description: '' }
+  formData.value = { code: '', name: '', description: '' }
   editingId.value = null
 }
 
 const handleSubmit = async () => {
+  if (!formData.value.code || !formData.value.name) {
+    showToast({ type: 'warning', message: '请填写角色编码和名称' })
+    return
+  }
+  
   try {
     loading.value = true
-    const submitData = {
-      ...formData.value,
-      desc: formData.value.description
-    }
+    const submitData = { ...formData.value }
     
     if (isEditing.value) {
       await roleApi.update(editingId.value, submitData)
