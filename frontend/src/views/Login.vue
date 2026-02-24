@@ -1,12 +1,6 @@
 <template>
   <div class="login-wrap">
-    <div class="login-left">
-      <div class="image-stack">
-        <img src="/images/login/2.png" alt="img2" class="stack-img img-1" />
-        <img src="/images/login/3.png" alt="img3" class="stack-img img-2" />
-        <img src="/images/login/login.png" alt="login" class="stack-img img-3" />
-      </div>
-    </div>
+  <div class="login-left"></div>
     <div class="login-right">
       <div class="login-card">
         <div class="login-header">
@@ -83,14 +77,17 @@ export default {
 }
 
 .login-left {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
+   flex: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-image: url('/assets/login-bg.jpg');
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   padding: 40px;
+   position: relative;
+   overflow: hidden;
 }
 
 .image-stack {
