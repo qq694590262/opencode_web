@@ -295,6 +295,11 @@ export default {
           userInfo.value = info
           formData.value = { ...formData.value, ...info }
         }
+        // 加载保存的头像颜色
+        const savedColor = localStorage.getItem('avatarColor')
+        if (savedColor) {
+          selectedColor.value = savedColor
+        }
       } catch (error) {
         console.error('获取用户信息失败:', error)
         // 使用模拟数据
@@ -382,6 +387,8 @@ export default {
     }
 
     const saveAvatar = () => {
+      // 保存头像颜色到本地存储
+      localStorage.setItem('avatarColor', selectedColor.value)
       showToast({ type: 'success', message: '头像已更新' })
       showAvatarModal.value = false
     }

@@ -169,3 +169,8 @@ export const uploadApi = {
     })
   },
 }
+
+export const systemApi = {
+  getConfig: () => request('/system/config'),
+  saveConfig: (data) => request('/system/config', { method: 'PUT', body: JSON.stringify(data) }),
+}

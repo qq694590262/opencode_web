@@ -166,6 +166,24 @@ CREATE TABLE IF NOT EXISTS sys_report (
     deleted INT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 系统配置表
+CREATE TABLE IF NOT EXISTS sys_system_config (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    system_name VARCHAR(100) DEFAULT 'OpenCode 企业管理系统',
+    copyright VARCHAR(255) DEFAULT '© 2024 OpenCode. All rights reserved.',
+    login_timeout INT DEFAULT 30,
+    password_expire INT DEFAULT 90,
+    max_login_fail INT DEFAULT 5,
+    max_devices INT DEFAULT 3,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 插入默认系统配置
+INSERT INTO sys_system_config (system_name, copyright, login_timeout, password_expire, max_login_fail, max_devices)
+SELECT 'OpenCode 企业管理系统', '© 2024 OpenCode. All rights reserved.', 30, 90, 5, 3
+WHERE NOT EXISTS (SELECT 1 FROM sys_system_config LIMIT 1);
+
 -- ============================================
 -- 插入测试数据（仅在表为空时执行）
 -- ============================================

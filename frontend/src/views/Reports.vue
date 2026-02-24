@@ -59,6 +59,29 @@
         </form>
       </div>
     </div>
+    <!-- 查看报表弹窗 -->
+    <div v-if="showViewModal" class="modal-overlay" @click.self="showViewModal = false">
+      <div class="modal">
+        <h3>📊 {{ currentReport.title }}</h3>
+        <div class="view-content">
+          <div class="form-group">
+            <label>描述</label>
+            <p class="view-value">{{ currentReport.description || '暂无描述' }}</p>
+          </div>
+          <div class="form-group">
+            <label>类型</label>
+            <p class="view-value">{{ getTypeText(currentReport.type) }}</p>
+          </div>
+          <div class="form-group">
+            <label>图标</label>
+            <p class="view-value">{{ currentReport.icon || '📊' }}</p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" @click="showViewModal = false">关闭</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -75,6 +98,8 @@ export default {
     const searchQuery = ref('')
     const showAddModal = ref(false)
     const showEditModal = ref(false)
+    const showViewModal = ref(false)
+    const currentReport = ref({})
     const formData = ref({
       title: '',
       description: '',
@@ -105,9 +130,21 @@ export default {
 
     const handleSearch = () => {}
 
+    const getTypeText = (type) => {
+      const typeMap = {
+        'sales': '销售报表',
+        'user': '用户报表',
+        'finance': '财务报表',
+        'inventory': '库存报表',
+        'performance': '业绩报表',
+        'traffic': '流量报表'
+      }
+      return typeMap[type] || type || '未知类型'
+    }
+
     const viewReport = (report) => {
-      console.log('查看报表:', report)
-      // 可以打开报表详情或下载
+      currentReport.value = report
+      showViewModal.value = true
     }
 
     const editReport = (report) => {
@@ -176,8 +213,11 @@ export default {
       searchQuery,
       showAddModal,
       showEditModal,
+      showViewModal,
+      currentReport,
       formData,
       handleSearch,
+      getTypeText,
       viewReport,
       editReport,
       deleteReport,
@@ -224,6 +264,8 @@ export default {
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .modal { background: #fff; border-radius: 16px; padding: 24px; width: 500px; max-width: 90%; max-height: 85vh; overflow-y: auto; }
 .modal h3 { margin: 0 0 20px 0; font-size: 18px; color: #1e293b; }
+.view-content { padding: 16px 0; }
+.view-value { font-size: 15px; color: #1e293b; margin: 0; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; color: #64748b; margin-bottom: 6px; }
 .form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }

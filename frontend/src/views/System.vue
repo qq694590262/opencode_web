@@ -276,7 +276,7 @@
 
 <script>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { dashboardApi } from '../api'
+import { dashboardApi, systemApi } from '../api'
 import { showToast } from '../components/Toast.vue'
 import { showConfirm } from '../components/ConfirmDialog.vue'
 
@@ -313,7 +313,36 @@ export default {
         }
       } catch (error) {
         console.error('获取系统信息失败:', error)
-        // 使用模拟数据
+      }
+      
+      // 加载系统配置
+      try {
+        const configRes = await systemApi.getConfig()
+        if (configRes.code === 200 && configRes.data) {
+          config.value = {
+            systemName: configRes.data.systemName || 'OpenCode 企业管理系统',
+            copyright: configRes.data.copyright || '© 2024 OpenCode. All rights reserved.',
+            loginTimeout: configRes.data.loginTimeout || 30,
+            passwordExpire: configRes.data.passwordExpire || 90,
+            maxLoginFail: configRes.data.maxLoginFail || 5,
+            maxDevices: configRes.data.maxDevices || 3
+          }
+        }
+      } catch (error) {
+        console.error('获取系统配置失败:', error)
+        // 使用默认配置
+        config.value = {
+          systemName: 'OpenCode 企业管理系统',
+          copyright: '© 2024 OpenCode. All rights reserved.',
+          loginTimeout: 30,
+          passwordExpire: 90,
+          maxLoginFail: 5,
+          maxDevices: 3
+        }
+      }
+      
+      // 如果没有系统信息数据，使用模拟数据
+      if (!systemInfo.value.status) {
         systemInfo.value = {
           status: '运行中',
           uptime: '15天6小时',
@@ -363,10 +392,12 @@ export default {
     const saveConfig = async () => {
       saving.value = true
       try {
-        // 模拟保存
-        await new Promise(resolve => setTimeout(resolve, 800))
-        showToast({ type: 'success', message: '配置保存成功' })
+        const res = await systemApi.saveConfig(config.value)
+        if (res.code === 200) {
+          showToast({ type: 'success', message: '配置保存成功' })
+        }
       } catch (error) {
+        console.error('保存配置失败:', error)
         showToast({ type: 'error', message: '保存失败' })
       } finally {
         saving.value = false

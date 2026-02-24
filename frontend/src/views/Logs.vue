@@ -456,8 +456,16 @@ export default {
       })
       
       if (confirmed) {
-        showToast({ type: 'success', message: '旧日志已清理' })
-        loadLogs()
+        try {
+          const res = await logApi.clearLogs()
+          if (res.code === 200) {
+            showToast({ type: 'success', message: '旧日志已清理' })
+            await loadLogs()
+          }
+        } catch (error) {
+          console.error('清理日志失败:', error)
+          showToast({ type: 'error', message: '清理失败: ' + (error.message || '未知错误') })
+        }
       }
     }
 
