@@ -18,13 +18,13 @@
       >
         <template v-for="item in MENU" :key="item.route || item.label">
           <el-menu-item v-if="!item.children" :index="item.route">
-            <el-icon><component :is="item.icon" /></el-icon>
+            <el-icon><IconMap :name="item.icon" /></el-icon>
             <template #title>{{ item.label }}</template>
           </el-menu-item>
           
           <el-sub-menu v-else :index="item.label">
             <template #title>
-              <el-icon><component :is="item.icon" /></el-icon>
+              <el-icon><IconMap :name="item.icon" /></el-icon>
               <span>{{ item.label }}</span>
             </template>
             <el-menu-item 
@@ -32,7 +32,7 @@
               :key="child.route" 
               :index="child.route"
             >
-              <el-icon><component :is="child.icon" /></el-icon>
+              <el-icon><IconMap :name="child.icon" /></el-icon>
               <span>{{ child.label }}</span>
             </el-menu-item>
           </el-sub-menu>
@@ -87,7 +87,7 @@
             </template>
             <template #default="{ item }">
               <div class="search-item">
-                <el-icon><component :is="item.icon" /></el-icon>
+                <el-icon><IconMap :name="item.icon" /></el-icon>
                 <span class="search-label">{{ item.label }}</span>
                 <span class="search-category">{{ item.category }}</span>
               </div>
