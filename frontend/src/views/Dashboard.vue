@@ -448,7 +448,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 24px;
+  padding: 0 24px;
   height: 56px;
   box-sizing: border-box;
   background: #fff;
@@ -474,13 +474,17 @@ export default {
 
 /* 搜索框 */
 .search-input {
-  width: 280px;
+  width: 240px;
+}
+
+.search-input :deep(.el-input__wrapper) {
+  padding: 4px 12px;
 }
 
 .search-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .search-label {
@@ -496,7 +500,7 @@ export default {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .notification-badge :deep(.el-badge__content) {
@@ -507,10 +511,10 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
   transition: background 0.2s;
 }
 
@@ -519,9 +523,10 @@ export default {
 }
 
 .user-name {
-  font-size: 14px;
+  font-size: 13px;
   color: #303133;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 /* 内容区 */
