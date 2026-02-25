@@ -352,24 +352,26 @@ export default {
   min-width: 64px;
 }
 
-/* 品牌标识 */
+/* 品牌标识 - 与右侧topbar对齐 */
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 16px;
+  padding: 16px;
+  height: 56px;
+  box-sizing: border-box;
   border-bottom: 1px solid #ebeef5;
   flex-shrink: 0;
 }
 
 .brand-icon {
-  font-size: 28px;
+  font-size: 22px;
   color: #409EFF;
   flex-shrink: 0;
 }
 
 .brand-text {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #303133;
   white-space: nowrap;
@@ -389,7 +391,7 @@ export default {
 
 /* 侧边栏底部 */
 .sidebar-footer {
-  padding: 16px;
+  padding: 12px 16px;
   border-top: 1px solid #ebeef5;
   flex-shrink: 0;
 }
@@ -446,7 +448,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 10px 24px;
+  height: 56px;
+  box-sizing: border-box;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
@@ -503,7 +507,7 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   padding: 6px 12px;
   border-radius: 8px;
@@ -523,8 +527,9 @@ export default {
 /* 内容区 */
 .content {
   flex: 1;
-  padding: 24px;
+  padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* 页面切换动画 */
