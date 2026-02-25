@@ -184,11 +184,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  background: url('/assets/images/login-bg.jpg') center/cover;
   position: relative;
   overflow: hidden;
   padding: 20px;
 }
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%);
+  z-index: 0;
+}
+
 
 /* 背景动画 */
 .bg-animation {
@@ -279,7 +288,7 @@ export default {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('/assets/login-bg.jpg') center/cover;
+  background: url('/assets/images/login-bg.jpg') center/cover;
   opacity: 0.3;
 }
 

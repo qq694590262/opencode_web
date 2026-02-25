@@ -20,6 +20,8 @@ public class DashboardController {
     private final TaskService taskService;
     private final UserService userService;
     private final LogService logService;
+    private final NoteService noteService;
+    private final TodoService todoService;
     
     @GetMapping("/overview")
     public Result<Map<String, Object>> getOverview() {
@@ -38,7 +40,7 @@ public class DashboardController {
         userWrapper.eq(User::getStatus, 1);
         long activeUsers = userService.count(userWrapper);
         
-        data.put("totalVisits", 1234); // 访问量需要统计，暂时用固定值
+        data.put("totalVisits", 1234);
         data.put("activeUsers", activeUsers);
         data.put("totalProjects", totalProjects);
         data.put("pendingTasks", pendingTasks);
@@ -60,7 +62,6 @@ public class DashboardController {
     
     @GetMapping("/activities")
     public Result<List<Map<String, Object>>> getActivities() {
-        // 从数据库查询最近的日志作为活动
         LambdaQueryWrapper<Log> logWrapper = new LambdaQueryWrapper<>();
         logWrapper.orderByDesc(Log::getCreateTime);
         logWrapper.last("limit 10");
@@ -150,7 +151,6 @@ public class DashboardController {
     public Result<Map<String, Object>> getSystemInfo() {
         Map<String, Object> data = new HashMap<>();
         
-        // 系统基本信息
         data.put("status", "运行中");
         data.put("uptime", "15天6小时");
         data.put("onlineUsers", 12);
@@ -176,6 +176,58 @@ public class DashboardController {
         data.put("timezone", "Asia/Shanghai");
         
         return Result.success(data);
+    }
+    
+    // ========== 便签 API ==========
+    @GetMapping("/notes")
+    public Result<List<Note>> getNotes() {
+        List<Note> notes = noteService.getAllNotes();
+        return Result.success(notes);
+    }
+    
+    @PostMapping("/notes")
+    public Result<Boolean> saveNote(@RequestBody Note note) {
+        boolean result = noteService.saveNote(note);
+        return Result.success(result);
+    }
+    
+    @PutMapping("/notes/{id}")
+    public Result<Boolean> updateNote(@PathVariable Long id, @RequestBody Note note) {
+        note.setId(id);
+        boolean result = noteService.updateNote(note);
+        return Result.success(result);
+    }
+    
+    @DeleteMapping("/notes/{id}")
+    public Result<Boolean> deleteNote(@PathVariable Long id) {
+        boolean result = noteService.deleteNote(id);
+        return Result.success(result);
+    }
+    
+    // ========== 待办事项 API ==========
+    @GetMapping("/todos")
+    public Result<List<Todo>> getTodos() {
+        List<Todo> todos = todoService.getAllTodos();
+        return Result.success(todos);
+    }
+    
+    @PostMapping("/todos")
+    public Result<Boolean> saveTodo(@RequestBody Todo todo) {
+        boolean result = todoService.saveTodo(todo);
+        return Result.success(result);
+    }
+    
+    @PutMapping("/todos/{id}")
+    public Result<Boolean> updateTodo(@PathVariable Long id, @RequestBody Todo todo) {
+        todo.setId(id);
+        boolean result = todoService.updateTodo(todo);
+        return Result.success(result);
+    }
+    
+    @DeleteMapping("/todos/{id}")
+    public Result<Boolean> deleteTodo(@PathVariable Long id) {
+        boolean result = todoService.deleteTodo(id);
+        return Result.success(result);
     }
     
     private String formatTimeAgo(LocalDateTime time) {

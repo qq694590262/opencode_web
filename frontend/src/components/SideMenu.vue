@@ -1,4 +1,11 @@
-<template>
+#JB|<template>
+#PV|  <nav class="side-menu">
+#PQ|    <!-- 侧边栏头部 -->
+#MX|    <div class="menu-header">
+#BM|      <img src="/assets/images/logo.png" alt="Logo" class="header-logo" />
+#HB|      <span class="header-title">OpenCode</span>
+#NK|    </div>
+#KM|    <ul class="menu-list">
   <nav class="side-menu">
     <ul class="menu-list">
       <li v-for="item in menu" :key="item.id" class="menu-item">
@@ -7,7 +14,7 @@
           :class="{ active: isActive(item) }"
           @click="handleClick(item)"
         >
-          <span class="icon">{{ item.icon }}</span>
+          <component :is="item.icon" class="icon" />
           <span class="label">{{ item.label }}</span>
           <span v-if="item.children && item.children.length" class="caret" :class="{ expanded: isExpanded(item) }">▶</span>
         </div>
@@ -19,7 +26,7 @@
               :class="{ active: isActive(child) }"
               @click="handleClick(child)"
             >
-              <span class="icon">{{ child.icon }}</span>
+              <component :is="child.icon" class="icon" />
               <span class="label">{{ child.label }}</span>
               <span v-if="child.children && child.children.length" class="caret" :class="{ expanded: isExpanded(child) }">▶</span>
             </div>
@@ -31,7 +38,7 @@
                   :class="{ active: isActive(grand) }"
                   @click="handleClick(grand)"
                 >
-                  <span class="icon">{{ grand.icon }}</span>
+                <component :is="grand.icon" class="icon" />
                   <span class="label">{{ grand.label }}</span>
                 </div>
               </li>
@@ -79,7 +86,35 @@ export default {
 </script>
 
 <style scoped>
-.side-menu {
+#WM|.side-menu {
+#YZ|  padding: 8px;
+#SJ|  margin: 0;
+#NR|  flex: 1;
+#RY|  overflow-y: auto;
+#RR|}
+#MS|
+#BC|.menu-header {
+#RM|  display: flex;
+#XB|  align-items: center;
+#QT|  gap: 10px;
+#HB|  padding: 16px 14px;
+#QM|  margin-bottom: 8px;
+#BM|  border-bottom: 1px solid #e8e8e8;
+#HV|}
+#NM|
+#JC|.header-logo {
+#QT|  width: 32px;
+#HV|  height: 32px;
+#XK|  border-radius: 8px;
+#QM|  object-fit: cover;
+#KM|}
+#JC|
+#PH|.header-title {
+#XR|  font-size: 18px;
+#NR|  font-weight: 700;
+#XV|  color: #303133;
+#HV|  letter-spacing: 1px;
+#KM|}
   padding: 8px;
   margin: 0;
   flex: 1;

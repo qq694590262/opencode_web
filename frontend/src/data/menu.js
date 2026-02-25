@@ -46,8 +46,8 @@ export const MENU = [
   // 系统设置
   {
     id: 'system', label: '系统设置', icon: 'Setting', children: [
-      { id: 'profile', label: '个人信息', route: '/dashboard/profile', icon: 'Avatar' },
-      { id: 'system', label: '系统配置', route: '/dashboard/system', icon: 'Cpu' },
+      { id: 'profile', label: '个人信息', route: '/dashboard/profile', icon: 'UserFilled' },
+      { id: 'system', label: '系统配置', route: '/dashboard/system', icon: 'Tools' },
       { id: 'logs', label: '操作日志', route: '/dashboard/logs', icon: 'List' }
     ]
   }

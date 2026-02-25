@@ -14,8 +14,10 @@
         class="sidebar-menu"
         :collapse="sidebarCollapsed"
         :collapse-transition="false"
+        :popper-append-to-body="false"
         router
       >
+
         <template v-for="item in MENU" :key="item.route || item.label">
           <el-menu-item v-if="!item.children" :index="item.route">
             <el-icon><IconMap :name="item.icon" /></el-icon>
@@ -161,6 +163,7 @@
 </template>
 
 <script>
+import IconMap from '../components/IconMap.vue'
 import { MENU } from '../data/menu'
 import { logout, getUserInfo } from '../auth'
 import { useRoute, useRouter } from 'vue-router'
@@ -177,6 +180,9 @@ import {
 
 export default {
   name: 'Dashboard',
+  components: {
+    IconMap
+  },
   data() {
     return { 
       MENU,
@@ -375,6 +381,20 @@ export default {
 </script>
 
 <style scoped>
+/* 禁用菜单所有动画 - 解决卡顿问题 */
+:deep(.el-menu-item),
+:deep(.el-sub-menu__title),
+:deep(.el-sub-menu .el-menu) {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* 整体布局 */
+
+/* 整体布局 */
+
+
+/* 整体布局 */
 /* 整体布局 */
 .dashboard {
   display: flex;
