@@ -28,6 +28,78 @@
       :data="filteredDepartments" 
       row-key="id"
       stripe 
+      class="dept-table"
+      v-loading="loading"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+    >
+      <el-table-column prop="name" label="部门名称" min-width="200">
+        <template #default="{ row }">
+          <div class="dept-name">
+            <el-icon><OfficeBuilding /></el-icon>
+            <span>{{ row.name }}</span>
+          </div>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="code" label="部门编码" width="140">
+        <template #default="{ row }">
+          <span class="dept-code">{{ row.code }}</span>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="leader" label="负责人" width="140" align="center">
+        <template #default="{ row }">
+          <div class="leader-cell" v-if="row.leader">
+            <span class="leader-avatar">{{ row.leader.charAt(0) }}</span>
+            <span>{{ row.leader }}</span>
+          </div>
+          <span v-else style="color: #cbd5e1;">-</span>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="phone" label="联系电话" width="150" align="center">
+        <template #default="{ row }">
+          <span style="color: #64748b;">{{ row.phone || '-' }}</span>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="status" label="状态" width="100" align="center">
+        <template #default="{ row }">
+          <span :class="['status-tag', row.status === 1 ? 'active' : 'inactive']">
+            {{ row.status === 1 ? '启用' : '禁用' }}
+          </span>
+        </template>
+      </el-table-column>
+      
+      <el-table-column prop="sort" label="排序" width="80" align="center">
+        <template #default="{ row }">
+          <span class="sort-num">{{ row.sort }}</span>
+        </template>
+      </el-table-column>
+      
+      <el-table-column label="操作" width="220" align="center" fixed="right">
+        <template #default="{ row }">
+          <div class="action-buttons">
+            <el-button type="primary" size="small" text bg @click="addChild(row)" v-if="row.status === 1">
+              <el-icon><Plus /></el-icon>
+              添加
+            </el-button>
+            <el-button type="primary" size="small" text bg @click="editDept(row)">
+              <el-icon><Edit /></el-icon>
+              编辑
+            </el-button>
+            <el-button type="danger" size="small" text bg @click="deleteDept(row)">
+              <el-icon><Delete /></el-icon>
+              删除
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-table 
+      :data="filteredDepartments" 
+      row-key="id"
+      stripe 
       border
       class="dept-table"
       v-loading="loading"

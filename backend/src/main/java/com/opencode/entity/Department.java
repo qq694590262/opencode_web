@@ -35,5 +35,6 @@ public class Department {
     @TableLogic
     private Integer deleted;
     
+    @TableField(exist = false)
     private List<Department> children;
 }

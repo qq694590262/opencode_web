@@ -206,8 +206,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { dashboardApi } from '../api'
 import { showToast } from '../components/Toast.vue'
+import NoteWidget from '../components/NoteWidget.vue'
+import TodoWidget from '../components/TodoWidget.vue'
 
 export default {
+  components: { NoteWidget, TodoWidget },
+
   name: 'Overview',
   setup() {
     const refreshing = ref(false)
