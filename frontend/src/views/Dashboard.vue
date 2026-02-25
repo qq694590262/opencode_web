@@ -41,14 +41,13 @@
       
       <!-- 侧边栏底部 -->
       <div class="sidebar-footer">
-        <el-button 
+        <button 
           class="logout-btn" 
-          :icon="SwitchButton" 
-          :plain="true"
           @click="handleLogout"
         >
+          <el-icon><SwitchButton /></el-icon>
           <span v-if="!sidebarCollapsed">退出登录</span>
-        </el-button>
+        </button>
       </div>
     </aside>
 
@@ -98,9 +97,29 @@
           <!-- 顶部操作区 -->
           <div class="topbar-actions">
             <!-- 通知图标 -->
-            <el-badge :value="3" class="notification-badge">
-              <el-button :icon="Bell" circle />
-            </el-badge>
+            <el-dropdown @command="handleNotify" trigger="click">
+              <el-badge :value="notifyCount" :hidden="notifyCount === 0" class="notification-badge">
+                <el-button :icon="Bell" circle />
+              </el-badge>
+              <template #dropdown>
+                <el-dropdown-menu class="notify-dropdown">
+                  <div class="notify-header">
+                    <span>通知中心</span>
+                    <el-button type="primary" link size="small" @click.stop="goToMessages">查看全部</el-button>
+                  </div>
+                  <el-dropdown-item v-for="notify in notifies" :key="notify.id" :command="'view:' + notify.id">
+                    <div class="notify-item">
+                      <el-icon :class="notify.type"><component :is="getNotifyIcon(notify.type)" /></el-icon>
+                      <div class="notify-content">
+                        <div class="notify-title">{{ notify.title }}</div>
+                        <div class="notify-time">{{ notify.time }}</div>
+                      </div>
+                    </div>
+                  </el-dropdown-item>
+                  <div class="notify-empty" v-if="notifies.length === 0">暂无新通知</div>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
             
             <!-- 用户下拉菜单 -->
             <el-dropdown @command="handleCommand">
@@ -152,7 +171,8 @@ import {
   User, Setting, SwitchButton, 
   Odometer, TrendCharts, DataAnalysis, User as UserIcon, 
   Document, Folder, Calendar, Notebook, Grid, Setting as SystemIcon,
-  Avatar, Collection, List
+  Avatar, Collection, List,
+  OfficeBuilding, School, BellFilled, Message, Checked, Reading, Cpu
 } from '@element-plus/icons-vue'
 
 export default {
@@ -287,6 +307,29 @@ export default {
       }
     }
     
+    // 通知相关
+    const notifyCount = ref(3)
+    const notifies = ref([
+      { id: 1, title: '新任务通知', time: '10分钟前', type: 'task' },
+      { id: 2, title: '系统公告', time: '1小时前', type: 'notice' },
+      { id: 3, title: '审批提醒', time: '2小时前', type: 'approve' }
+    ])
+    
+    const getNotifyIcon = (type) => {
+      const icons = { task: 'Document', notice: 'BellFilled', approve: 'CircleCheck' }
+      return icons[type] || 'Bell'
+    }
+    
+    const handleNotify = (command) => {
+      if (command.startsWith('view:')) {
+        router.push('/dashboard/messages')
+      }
+    }
+    
+    const goToMessages = () => {
+      router.push('/dashboard/messages')
+    }
+    
     // 退出登录
     const handleLogout = async () => {
       try {
@@ -317,9 +360,15 @@ export default {
       handleEnter,
       handleCommand,
       handleLogout,
+      notifyCount,
+      notifies,
+      getNotifyIcon,
+      handleNotify,
+      goToMessages,
       // Icons
       DataBoard, HomeFilled, Search, Bell, ArrowDown, ArrowLeft, ArrowRight,
-      User, Setting, SwitchButton
+      User, Setting, SwitchButton,
+      OfficeBuilding, School, BellFilled, Message, Checked, Reading, Cpu
     }
   }
 }
@@ -398,7 +447,22 @@ export default {
 
 .logout-btn {
   width: 100%;
-  justify-content: flex-start !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  color: #606266;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  color: #409EFF;
+  border-color: #409EFF;
 }
 
 /* 折叠按钮 */
@@ -551,5 +615,65 @@ export default {
 .page-fade-leave-to {
   opacity: 0;
   transform: translateX(-20px);
+}
+
+/* 通知下拉菜单 */
+.notify-dropdown {
+  padding: 0 !important;
+  min-width: 280px;
+}
+
+.notify-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ebeef5;
+  font-weight: 600;
+  color: #303133;
+}
+
+.notify-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.notify-item .el-icon {
+  font-size: 18px;
+}
+
+.notify-item .el-icon.task {
+  color: #409EFF;
+}
+
+.notify-item .el-icon.notice {
+  color: #E6A23C;
+}
+
+.notify-item .el-icon.approve {
+  color: #67C23A;
+}
+
+.notify-content {
+  flex: 1;
+}
+
+.notify-title {
+  font-size: 13px;
+  color: #303133;
+}
+
+.notify-time {
+  font-size: 12px;
+  color: #909399;
+}
+
+.notify-empty {
+  padding: 20px;
+  text-align: center;
+  color: #909399;
+  font-size: 13px;
 }
 </style>

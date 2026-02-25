@@ -20,6 +20,9 @@ import Wiki from './views/Wiki.vue'
 import Profile from './views/Profile.vue'
 import Prefs from './views/Prefs.vue'
 import System from './views/System.vue'
+import Departments from './views/Departments.vue'
+import Notices from './views/Notices.vue'
+import Messages from './views/Messages.vue'
 import { isAuthenticated } from './auth'
 
 const routes = [
@@ -32,6 +35,7 @@ const routes = [
       { path: 'overview', component: Overview },
       { path: 'reports', component: Reports },
       { path: 'charts', component: Charts },
+      { path: 'departments', component: Departments },
       { path: 'users', component: Users },
       { path: 'roles', component: Roles },
       { path: 'logs', component: Logs },
@@ -40,6 +44,8 @@ const routes = [
       { path: 'calendar', component: Calendar },
       { path: 'documents', component: Documents },
       { path: 'wiki', component: Wiki },
+      { path: 'notices', component: Notices },
+      { path: 'messages', component: Messages },
       { path: 'profile', component: Profile },
       { path: 'prefs', component: Prefs },
       { path: 'system', component: System }
