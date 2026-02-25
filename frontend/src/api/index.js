@@ -203,3 +203,12 @@ export const systemApi = {
   getConfig: () => request('/system/config'),
   saveConfig: (data) => request('/system/config', { method: 'PUT', body: JSON.stringify(data) }),
 }
+
+export const departmentApi = {
+  getAll: () => request('/departments'),
+  getTree: () => request('/departments/tree'),
+  getById: (id) => request(`/departments/${id}`),
+  create: (data) => request('/departments', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => request(`/departments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/departments/${id}`, { method: 'DELETE' }),
+}
