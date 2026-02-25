@@ -165,7 +165,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
-import { departmentApi } from '@/api'
+import { departmentApi } from '../api'
 
 export default {
   name: 'Departments',

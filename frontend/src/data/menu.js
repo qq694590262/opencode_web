@@ -1,5 +1,5 @@
 export const MENU = [
-  { id: 'dashboard', label: '工作台', route: '/dashboard', icon: 'Odometer', children: [] },
+  { id: 'dashboard', label: '工作台', route: '/dashboard/workplace', icon: 'Odometer' },
   
   // 组织架构
   {

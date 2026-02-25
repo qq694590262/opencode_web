@@ -6,6 +6,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import Login from './views/Login.vue'
 import Dashboard from './views/Dashboard.vue'
+import Workplace from './views/Workplace.vue'
 import Overview from './views/Overview.vue'
 import Reports from './views/Reports.vue'
 import Charts from './views/Charts.vue'
@@ -30,8 +31,9 @@ const routes = [
   { 
     path: '/dashboard', 
     component: Dashboard,
-    children: [
-      { path: '', redirect: '/dashboard/overview' },
+children: [
+      { path: '', redirect: '/dashboard/workplace' },
+      { path: 'workplace', component: Workplace },
       { path: 'overview', component: Overview },
       { path: 'reports', component: Reports },
       { path: 'charts', component: Charts },

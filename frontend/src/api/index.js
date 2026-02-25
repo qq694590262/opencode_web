@@ -150,6 +150,16 @@ export const dashboardApi = {
   getQuickLinks: () => request('/dashboard/quick-links'),
   getCharts: () => request('/dashboard/charts'),
   getSystemInfo: () => request('/dashboard/system-info'),
+  // 便签API
+  getNotes: () => request('/dashboard/notes'),
+  saveNote: (data) => request('/dashboard/notes', { method: 'POST', body: JSON.stringify(data) }),
+  updateNote: (id, data) => request(`/dashboard/notes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteNote: (id) => request(`/dashboard/notes/${id}`, { method: 'DELETE' }),
+  // 待办API
+  getTodos: () => request('/dashboard/todos'),
+  saveTodo: (data) => request('/dashboard/todos', { method: 'POST', body: JSON.stringify(data) }),
+  updateTodo: (id, data) => request(`/dashboard/todos/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteTodo: (id) => request(`/dashboard/todos/${id}`, { method: 'DELETE' }),
 }
 
 export const calendarApi = {
