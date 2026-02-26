@@ -23,23 +23,27 @@
       />
     </div>
 
-    <!-- 部门树形表格 -->
     <el-table 
       :data="filteredDepartments" 
       row-key="id"
       stripe 
       class="dept-table"
       v-loading="loading"
-      :expand-row-keys="expandedKeys"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <el-table-column prop="name" label="部门名称" min-width="200">
         <template #default="{ row, treeNode }">
-          <div class="dept-name" :style="{ paddingLeft: treeNode.level * 20 + 'px' }">
-            <el-icon v-if="row.children && row.children.length > 0" class="arrow-icon">
-              <ArrowRight />
-            </el-icon>
-            <el-icon v-else class="folder-icon">
+          <div class="dept-name" :style="{ paddingLeft: (treeNode.level - 1) * 20 + 'px' }">
+            <span 
+              v-if="row.children && row.children.length > 0" 
+              class="tree-arrow"
+              :class="{ expanded: treeNode.expanded }"
+              @click="treeNode.expanded = !treeNode.expanded"
+            >
+              <el-icon><ArrowRight /></el-icon>
+            </span>
+            <span v-else class="folder-placeholder"></span>
+            <el-icon class="folder-icon">
               <OfficeBuilding />
             </el-icon>
             <span class="dept-text">{{ row.name }}</span>
@@ -179,6 +183,7 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
+
     
     const formData = ref({
       id: null,
@@ -354,6 +359,7 @@ export default {
       formData,
       rules,
       parentName,
+
       openAddDialog,
       addChild,
       editDept,
@@ -440,9 +446,20 @@ export default {
   gap: 8px;
 }
 
-.arrow-icon {
+.tree-arrow {
   color: #409EFF;
   font-size: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.tree-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.folder-placeholder {
+  width: 14px;
   flex-shrink: 0;
 }
 
