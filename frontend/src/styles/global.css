@@ -1,0 +1,26 @@
+:root {
+  --bg: #f4f6f9;
+  --card: #fff;
+  --text: #303133;
+  --muted: #909399;
+  --primary: #409EFF;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(0,0,0,.05);
+}
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body { margin: 0; font-family: Inter, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: var(--text); background: var(--bg); }
+.page-container { padding: 0 20px; min-height: 100vh; }
+.page-header { background: linear-gradient(135deg, rgba(64,144,255,.08) 0%, rgba(255,255,255,1) 60%); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; display:flex; justify-content: space-between; align-items: center; }
+.header-content { display:flex; flex-direction:column; }
+.page-title { display:flex; align-items:center; gap: 8px; font-weight: 700; font-size: 20px; }
+.page-title .el-icon { color: var(--primary); }
+.page-desc { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.dept-table-wrapper { background: #fff; border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); margin: 12px 0; }
+.dept-table { width: 100%; border-radius: 8px; overflow: hidden; }
+.dept-icon { color: #3c8dbc; font-size: 16px; }
+.dept-name { font-weight: 700; }
+.text-gray { color: #9CA3AF; }
+.status-tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.action-btns { display: flex; gap: 6px; justify-content: center; }

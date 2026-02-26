@@ -275,6 +275,15 @@ export default {
 </script>
 
 <style scoped>
+.page-container { padding: 0 20px; background: #f4f6f9; min-height: 100vh; }
+.dept-table { border-radius: 12px; overflow: hidden; }
+.dept-table thead { background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%); }
+.dept-table tbody tr:hover { background: #f5f7fb; }
+.dept-icon { color: #3c8dbc; font-size: 16px; margin-right: 6px; }
+.dept-name { font-weight: 700; }
+.text-gray { color: #888; }
+.status-tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.action-btns { display: flex; gap: 6px; justify-content: center; }
 .page-container { animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(0); } to { opacity: 1; transform: translateY(0); } }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
