@@ -19,11 +19,21 @@
         </router-link>
       </div>
     </div>
+
+    <!-- 便签和待办 -->
+    <div class="widgets-row">
+      <NoteWidget />
+      <TodoWidget />
+    </div>
   </div>
 </template>
 
 <script>
+import NoteWidget from '../components/NoteWidget.vue'
+import TodoWidget from '../components/TodoWidget.vue'
+
 export default {
+  components: { NoteWidget, TodoWidget },
   name: 'Workplace',
   setup() {
     const quickLinks = [
@@ -123,12 +133,20 @@ export default {
   color: #94a3b8;
 }
 
-
+/* 便签和待办 */
+.widgets-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
 
 /* 响应式 */
 @media (max-width: 1200px) {
   .quick-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .widgets-row {
+    grid-template-columns: 1fr;
   }
 }
 
