@@ -34,15 +34,6 @@
       <el-table-column prop="name" label="部门名称" min-width="200">
         <template #default="{ row, treeNode }">
           <div class="dept-name" :style="{ paddingLeft: (treeNode.level - 1) * 20 + 'px' }">
-            <span 
-              v-if="row.children && row.children.length > 0" 
-              class="tree-arrow"
-              :class="{ expanded: treeNode.expanded }"
-              @click="treeNode.expanded = !treeNode.expanded"
-            >
-              <el-icon><ArrowRight /></el-icon>
-            </span>
-            <span v-else class="folder-placeholder"></span>
             <el-icon class="folder-icon">
               <OfficeBuilding />
             </el-icon>
@@ -169,7 +160,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
+import { OfficeBuilding, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
 import { departmentApi } from '../api'
 
 export default {
@@ -370,8 +361,6 @@ export default {
       Plus,
       Search,
       Edit,
-      Delete,
-      ArrowRight
     }
   }
 }
@@ -446,22 +435,7 @@ export default {
   gap: 8px;
 }
 
-.tree-arrow {
-  color: #409EFF;
-  font-size: 14px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
 
-.tree-arrow.expanded {
-  transform: rotate(90deg);
-}
-
-.folder-placeholder {
-  width: 14px;
-  flex-shrink: 0;
-}
 
 .folder-icon {
   color: #E6A23C;
