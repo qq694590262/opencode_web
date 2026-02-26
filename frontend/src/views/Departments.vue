@@ -34,8 +34,8 @@
         :tree-props="{ children: 'children' }"
         class="dept-table"
       >
-        <!-- 使用 el-table type="tree" 的树形列，箭头与文本在同一行 -->
-        <el-table-column prop="name" label="部门名称" min-width="220" type="tree"></el-table-column>
+        <!-- 部门名称列：内置树形箭头留在名称列左侧，形成单箭头在第一列的树形结构 -->
+        <el-table-column prop="name" label="部门名称" min-width="240"></el-table-column>
 
         <el-table-column prop="code" label="部门编码" width="140" align="center" />
         
