@@ -23,80 +23,41 @@
       />
     </div>
 
-    <el-table 
-      :data="filteredDepartments" 
-      row-key="id"
-      stripe 
-      class="dept-table"
-      v-loading="loading"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-    >
-      <el-table-column prop="name" label="部门名称" min-width="200">
-        <template #default="{ row, treeNode }">
-          <div class="dept-name" :style="{ paddingLeft: (treeNode.level - 1) * 20 + 'px' }">
-            <el-icon class="folder-icon">
-              <OfficeBuilding />
-            </el-icon>
-            <span class="dept-text">{{ row.name }}</span>
+    <!-- 部门树 -->
+    <div class="dept-tree-wrapper">
+      <el-tree
+        :data="filteredDepartments"
+        :props="treeProps"
+        node-key="id"
+        :expand-on-click-node="false"
+        :default-expand-all="true"
+        v-loading="loading"
+        class="dept-tree"
+      >
+        <template #default="{ node, data }">
+          <div class="dept-node">
+            <div class="dept-info">
+              <el-icon class="dept-icon"><OfficeBuilding /></el-icon>
+              <span class="dept-name">{{ data.name }}</span>
+              <span class="dept-code">({{ data.code }})</span>
+            </div>
+            <div class="dept-actions">
+              <el-tag v-if="data.status === 1" type="success" size="small">启用</el-tag>
+              <el-tag v-else type="danger" size="small">禁用</el-tag>
+              <el-button type="primary" size="small" link @click.stop="addChild(data)" v-if="data.status === 1">
+                <el-icon><Plus /></el-icon>添加
+              </el-button>
+              <el-button type="primary" size="small" link @click.stop="editDept(data)">
+                <el-icon><Edit /></el-icon>编辑
+              </el-button>
+              <el-button type="danger" size="small" link @click.stop="deleteDept(data)">
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
           </div>
         </template>
-      </el-table-column>
-      
-      <el-table-column prop="code" label="部门编码" width="140">
-        <template #default="{ row }">
-          <span class="dept-code">{{ row.code }}</span>
-        </template>
-      </el-table-column>
-      
-      <el-table-column prop="leader" label="负责人" width="140" align="center">
-        <template #default="{ row }">
-          <div class="leader-cell" v-if="row.leader">
-            <span class="leader-avatar">{{ row.leader.charAt(0) }}</span>
-            <span>{{ row.leader }}</span>
-          </div>
-          <span v-else class="no-data">-</span>
-        </template>
-      </el-table-column>
-      
-      <el-table-column prop="phone" label="联系电话" width="150" align="center">
-        <template #default="{ row }">
-          <span class="phone-text">{{ row.phone || '-' }}</span>
-        </template>
-      </el-table-column>
-      
-      <el-table-column prop="status" label="状态" width="100" align="center">
-        <template #default="{ row }">
-          <span :class="['status-tag', row.status === 1 ? 'active' : 'inactive']">
-            {{ row.status === 1 ? '启用' : '禁用' }}
-          </span>
-        </template>
-      </el-table-column>
-      
-      <el-table-column prop="sort" label="排序" width="80" align="center">
-        <template #default="{ row }">
-          <span class="sort-num">{{ row.sort }}</span>
-        </template>
-      </el-table-column>
-      
-      <el-table-column label="操作" width="180" align="center" fixed="right">
-        <template #default="{ row }">
-          <div class="action-buttons">
-            <el-button type="primary" size="small" text bg @click="addChild(row)" v-if="row.status === 1">
-              <el-icon><Plus /></el-icon>
-              添加
-            </el-button>
-            <el-button type="primary" size="small" text bg @click="editDept(row)">
-              <el-icon><Edit /></el-icon>
-              编辑
-            </el-button>
-            <el-button type="danger" size="small" text bg @click="deleteDept(row)">
-              <el-icon><Delete /></el-icon>
-              删除
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+      </el-tree>
+    </div>
 
     <!-- 部门表单弹窗 -->
     <el-dialog 
@@ -174,7 +135,11 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
-
+    
+    const treeProps = {
+      children: 'children',
+      label: 'name'
+    }
     
     const formData = ref({
       id: null,
@@ -200,7 +165,6 @@ export default {
     const buildTree = (list, parentId = null) => {
       return list
         .filter(item => {
-          // 处理根节点：parentId 为 null 或 0
           if (parentId === null || parentId === 0) {
             return item.parentId === null || item.parentId === 0 || item.parentId === undefined
           }
@@ -276,7 +240,6 @@ export default {
       isEdit.value = true
       formData.value = { ...dept }
       parentName.value = ''
-      // 查找父部门名称
       if (dept.parentId) {
         const parent = departments.value.find(d => d.id === dept.parentId)
         parentName.value = parent ? parent.name : ''
@@ -293,7 +256,6 @@ export default {
         )
         
         await departmentApi.delete(dept.id)
-        // 重新加载数据
         await loadDepartments()
         ElMessage.success('删除成功')
       } catch (error) {
@@ -321,7 +283,6 @@ export default {
           }
           
           closeDialog()
-          // 重新加载数据
           await loadDepartments()
         } catch (error) {
           console.error('保存失败:', error)
@@ -350,7 +311,7 @@ export default {
       formData,
       rules,
       parentName,
-
+      treeProps,
       openAddDialog,
       addChild,
       editDept,
@@ -361,6 +322,7 @@ export default {
       Plus,
       Search,
       Edit,
+      Delete
     }
   }
 }
@@ -416,97 +378,60 @@ export default {
   max-width: 320px;
 }
 
-.dept-table {
+.dept-tree-wrapper {
+  background: #fff;
   border-radius: 12px;
-  overflow: hidden;
+  padding: 20px;
 }
 
-.dept-table :deep(.el-table__row) {
+.dept-tree {
+  background: transparent;
+}
+
+.dept-tree :deep(.el-tree-node__content) {
   height: 48px;
+  border-radius: 8px;
+  margin-bottom: 4px;
 }
 
-.dept-table :deep(.el-table__cell) {
-  padding: 8px 0;
+.dept-tree :deep(.el-tree-node__content:hover) {
+  background: #f5f7fa;
 }
 
-.dept-name {
+.dept-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  width: 100%;
+}
+
+.dept-info {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-
-
-.folder-icon {
+.dept-icon {
   color: #E6A23C;
   font-size: 16px;
-  flex-shrink: 0;
 }
 
-.dept-text {
+.dept-name {
   color: #303133;
   font-weight: 500;
 }
 
 .dept-code {
-  color: #606266;
-  font-family: 'Monaco', 'Consolas', monospace;
-}
-
-.leader-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.leader-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #409EFF 0%, #67C23A 100%);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.no-data {
-  color: #cbd5e1;
-}
-
-.phone-text {
-  color: #64748b;
-}
-
-.status-tag {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-tag.active {
-  background: #e8f5e9;
-  color: #67C23A;
-}
-
-.status-tag.inactive {
-  background: #ffebee;
-  color: #F56C6C;
-}
-
-.sort-num {
   color: #909399;
-  font-weight: 500;
+  font-size: 12px;
 }
 
-.action-buttons {
+.dept-actions {
   display: flex;
-  justify-content: center;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
 }
 
 .dept-form :deep(.el-form-item__label) {
