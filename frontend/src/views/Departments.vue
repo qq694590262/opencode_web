@@ -34,11 +34,11 @@
         :tree-props="{ children: 'children' }"
         class="dept-table"
       >
-        <!-- 部门名称列：内置树形箭头留在名称列左侧，形成单箭头在第一列的树形结构 -->
-        <el-table-column prop="name" label="部门名称" min-width="240"></el-table-column>
+        <!-- 第一列：部门名称，使用树形列，箭头与名称同行 -->
+        <el-table-column prop="name" label="部门名称" min-width="240" type="tree"></el-table-column>
 
         <el-table-column prop="code" label="部门编码" width="140" align="center" />
-        
+
         <el-table-column prop="leader" label="负责人" width="120" align="center">
           <template #default="{ row }">
             <span v-if="row.leader">{{ row.leader }}</span>
@@ -52,7 +52,7 @@
             <span v-else class="text-gray">-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column prop="status" label="状态" width="80" align="center">
           <template #default="{ row }">
             <span :class="['status-tag', row.status === 1 ? 'active' : 'inactive']">
@@ -60,7 +60,7 @@
             </span>
           </template>
         </el-table-column>
-        
+
         <el-table-column label="操作" width="140" align="center" fixed="right">
           <template #default="{ row }">
             <div class="action-btns">
@@ -155,9 +155,7 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
-    const formData = ref({
-      id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1
-    })
+    const formData = ref({ id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 })
     const rules = {
       name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
       code: [{ required: true, message: '请输入部门编码', trigger: 'blur' }]
@@ -278,7 +276,7 @@ export default {
 
 <style scoped>
 .page-container { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(0); } to { opacity: 1; transform: translateY(0); } }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
 .header-content { display: flex; flex-direction: column; }
 .page-title { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 600; color: #303133; margin: 0; }
