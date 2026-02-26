@@ -202,12 +202,18 @@ export default {
     // 递归构建树形结构
     const buildTree = (list, parentId = null) => {
       return list
-        .filter(item => item.parentId === parentId)
+        .filter(item => {
+          // 处理根节点：parentId 为 null 或 0
+          if (parentId === null || parentId === 0) {
+            return item.parentId === null || item.parentId === 0 || item.parentId === undefined
+          }
+          return item.parentId === parentId
+        })
         .map(item => ({
           ...item,
           children: buildTree(list, item.id)
         }))
-        .sort((a, b) => a.sort - b.sort)
+        .sort((a, b) => (a.sort || 0) - (b.sort || 0))
     }
     
     const filteredDepartments = computed(() => {
