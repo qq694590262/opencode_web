@@ -37,18 +37,12 @@
         <el-table-column prop="name" label="部门名称" min-width="220">
           <template #default="{ row, treeNode }">
             <div class="dept-name-cell">
-              <span 
-                class="tree-arrow" 
-                :class="{ expanded: treeNode.expanded }"
-                @click="treeNode.expanded = !treeNode.expanded"
-              >
-                <el-icon><ArrowRight v-if="row.children && row.children.length" /></el-icon>
-              </span>
               <el-icon class="dept-icon"><OfficeBuilding /></el-icon>
               <span class="dept-name">{{ row.name }}</span>
             </div>
           </template>
         </el-table-column>
+
         
         <el-table-column prop="code" label="部门编码" width="140" align="center">
           <template #default="{ row }">
@@ -158,7 +152,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
+import { OfficeBuilding, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
 import { departmentApi } from '../api'
 
 export default {
@@ -353,8 +347,7 @@ export default {
       Plus,
       Search,
       Edit,
-      Delete,
-      ArrowRight
+      Delete
     }
   }
 }
@@ -426,20 +419,7 @@ export default {
   gap: 6px;
 }
 
-.tree-arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  color: #909399;
-  transition: transform 0.2s;
-}
 
-.tree-arrow.expanded {
-  transform: rotate(90deg);
-}
 
 .dept-icon {
   color: #E6A23C;
