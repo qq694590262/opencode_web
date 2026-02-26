@@ -16,6 +16,7 @@ public class Department {
     
     private String code;
     
+    @TableField("parent_id")
     private Long parentId;
     
     private String leader;
