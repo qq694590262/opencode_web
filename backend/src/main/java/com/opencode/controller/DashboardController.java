@@ -181,8 +181,11 @@ public class DashboardController {
     }
     
     @PostMapping("/notes")
-    public Result<Boolean> saveNote(@RequestBody Note note, @RequestParam(required = false, defaultValue = "1") Long userId) {
-        note.setUserId(userId);
+    public Result<Boolean> saveNote(@RequestBody Note note) {
+        // 如果前端没有传userId，默认设为1
+        if (note.getUserId() == null) {
+            note.setUserId(1L);
+        }
         boolean result = noteService.saveNote(note);
         return Result.success(result);
     }
@@ -208,8 +211,11 @@ public class DashboardController {
     }
     
     @PostMapping("/todos")
-    public Result<Boolean> saveTodo(@RequestBody Todo todo, @RequestParam(required = false, defaultValue = "1") Long userId) {
-        todo.setUserId(userId);
+    public Result<Boolean> saveTodo(@RequestBody Todo todo) {
+        // 如果前端没有传userId，默认设为1
+        if (todo.getUserId() == null) {
+            todo.setUserId(1L);
+        }
         boolean result = todoService.saveTodo(todo);
         return Result.success(result);
     }
