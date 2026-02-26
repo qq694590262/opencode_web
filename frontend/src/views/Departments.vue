@@ -25,30 +25,19 @@
 
     <!-- 部门树形表格 -->
     <div class="dept-table-wrapper">
-      <el-table 
-        :data="filteredDepartments" 
+      <el-table
+        :data="filteredDepartments"
         row-key="id"
-        stripe 
+        stripe
         border
         v-loading="loading"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        :tree-props="{ children: 'children' }"
         class="dept-table"
       >
-        <el-table-column prop="name" label="部门名称" min-width="220">
-          <template #default="{ row, treeNode }">
-            <div class="dept-name-cell">
-              <el-icon class="dept-icon"><OfficeBuilding /></el-icon>
-              <span class="dept-name">{{ row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
+        <!-- 使用 el-table type="tree" 的树形列，箭头与文本在同一行 -->
+        <el-table-column prop="name" label="部门名称" min-width="220" type="tree"></el-table-column>
 
-        
-        <el-table-column prop="code" label="部门编码" width="140" align="center">
-          <template #default="{ row }">
-            <span class="dept-code">{{ row.code }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="code" label="部门编码" width="140" align="center" />
         
         <el-table-column prop="leader" label="负责人" width="120" align="center">
           <template #default="{ row }">
@@ -56,7 +45,7 @@
             <span v-else class="text-gray">-</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column prop="phone" label="联系电话" width="140" align="center">
           <template #default="{ row }">
             <span v-if="row.phone">{{ row.phone }}</span>
@@ -66,9 +55,9 @@
         
         <el-table-column prop="status" label="状态" width="80" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
+            <span :class="['status-tag', row.status === 1 ? 'active' : 'inactive']">
               {{ row.status === 1 ? '启用' : '禁用' }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
         
@@ -166,27 +155,15 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
-    
     const formData = ref({
-      id: null,
-      parentId: null,
-      name: '',
-      code: '',
-      leader: '',
-      phone: '',
-      sort: 0,
-      status: 1
+      id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1
     })
-    
     const rules = {
-      name: [
-        { required: true, message: '请输入部门名称', trigger: 'blur' }
-      ],
-      code: [
-        { required: true, message: '请输入部门编码', trigger: 'blur' }
-      ]
+      name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
+      code: [{ required: true, message: '请输入部门编码', trigger: 'blur' }]
     }
-    
+    const treeProps = { children: 'children', hasChildren: 'hasChildren' }
+
     // 递归构建树形结构
     const buildTree = (list, parentId = null) => {
       return list
@@ -196,32 +173,25 @@ export default {
           }
           return item.parentId === parentId
         })
-        .map(item => ({
-          ...item,
-          children: buildTree(list, item.id)
-        }))
+        .map(item => ({ ...item, children: buildTree(list, item.id) }))
         .sort((a, b) => (a.sort || 0) - (b.sort || 0))
     }
-    
+
     const filteredDepartments = computed(() => {
+      const list = departments.value || []
       if (!searchQuery.value) {
-        return buildTree(departments.value)
+        return buildTree(list, null)
       }
-      const query = searchQuery.value.toLowerCase()
-      const filtered = departments.value.filter(dept => 
-        dept.name?.toLowerCase().includes(query) ||
-        dept.code?.toLowerCase().includes(query)
-      )
-      return buildTree(filtered)
+      const q = searchQuery.value.toLowerCase()
+      const filtered = list.filter(d => (d.name?.toLowerCase().includes(q)) || (d.code?.toLowerCase().includes(q)))
+      return buildTree(filtered, null)
     })
-    
+
     const loadDepartments = async () => {
       loading.value = true
       try {
         const res = await departmentApi.getAll()
-        if (res.data) {
-          departments.value = res.data
-        }
+        if (res.data) departments.value = res.data
       } catch (error) {
         console.error('获取部门列表失败:', error)
         ElMessage.error('获取部门列表失败')
@@ -229,39 +199,21 @@ export default {
         loading.value = false
       }
     }
-    
+
     const openAddDialog = () => {
       isEdit.value = false
-      formData.value = {
-        id: null,
-        parentId: null,
-        name: '',
-        code: '',
-        leader: '',
-        phone: '',
-        sort: 0,
-        status: 1
-      }
+      formData.value = { id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 }
       parentName.value = ''
       dialogVisible.value = true
     }
-    
+
     const addChild = (row) => {
       isEdit.value = false
-      formData.value = {
-        id: null,
-        parentId: row.id,
-        name: '',
-        code: '',
-        leader: '',
-        phone: '',
-        sort: 0,
-        status: 1
-      }
+      formData.value = { id: null, parentId: row.id, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 }
       parentName.value = row.name
       dialogVisible.value = true
     }
-    
+
     const editDept = (dept) => {
       isEdit.value = true
       formData.value = { ...dept }
@@ -272,15 +224,10 @@ export default {
       }
       dialogVisible.value = true
     }
-    
+
     const deleteDept = async (dept) => {
       try {
-        await ElMessageBox.confirm(
-          `确定要删除部门 "${dept.name}" 吗？此操作不可恢复。`,
-          '删除确认',
-          { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
-        )
-        
+        await ElMessageBox.confirm(`确定要删除部门 "${dept.name}" 吗？此操作不可恢复。`, '删除确认', { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' })
         await departmentApi.delete(dept.id)
         await loadDepartments()
         ElMessage.success('删除成功')
@@ -291,13 +238,11 @@ export default {
         }
       }
     }
-    
+
     const saveDept = async () => {
       if (!formRef.value) return
-      
       await formRef.value.validate(async (valid) => {
         if (!valid) return
-        
         saving.value = true
         try {
           if (isEdit.value) {
@@ -307,7 +252,6 @@ export default {
             await departmentApi.create(formData.value)
             ElMessage.success('创建成功')
           }
-          
           closeDialog()
           await loadDepartments()
         } catch (error) {
@@ -318,135 +262,37 @@ export default {
         }
       })
     }
-    
-    const closeDialog = () => {
-      dialogVisible.value = false
-    }
-    
+
+    const closeDialog = () => { dialogVisible.value = false }
+
     onMounted(loadDepartments)
-    
+
     return {
-      loading,
-      saving,
-      departments,
-      searchQuery,
-      filteredDepartments,
-      dialogVisible,
-      isEdit,
-      formRef,
-      formData,
-      rules,
-      parentName,
-      openAddDialog,
-      addChild,
-      editDept,
-      deleteDept,
-      saveDept,
-      closeDialog,
-      OfficeBuilding,
-      Plus,
-      Search,
-      Edit,
-      Delete
+      loading, saving, departments, searchQuery, filteredDepartments, dialogVisible, isEdit,
+      formRef, formData, rules, parentName, openAddDialog, addChild, editDept, deleteDept, saveDept, closeDialog,
+      OfficeBuilding, Plus, Search, Edit, Delete, treeProps
     }
   }
 }
 </script>
 
 <style scoped>
-.page-container {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.page-title .el-icon {
-  color: #409EFF;
-}
-
-.page-desc {
-  font-size: 14px;
-  color: #909399;
-  margin: 6px 0 0 0;
-}
-
-.search-bar {
-  margin-bottom: 20px;
-}
-
-.search-input {
-  max-width: 320px;
-}
-
-.dept-table-wrapper {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.dept-table {
-  width: 100%;
-}
-
-.dept-name-cell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-
-
-.dept-icon {
-  color: #E6A23C;
-  font-size: 16px;
-}
-
-.dept-name {
-  color: #303133;
-  font-weight: 500;
-}
-
-.dept-code {
-  color: #606266;
-  font-family: monospace;
-}
-
-.text-gray {
-  color: #c0c4cc;
-}
-
-.action-btns {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-
-.dept-form :deep(.el-form-item__label) {
-  font-weight: 500;
-}
+.page-container { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.header-content { display: flex; flex-direction: column; }
+.page-title { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 600; color: #303133; margin: 0; }
+.page-title .el-icon { color: #409EFF; }
+.page-desc { font-size: 14px; color: #909399; margin: 6px 0 0 0; }
+.search-bar { margin-bottom: 20px; }
+.search-input { max-width: 320px; }
+.dept-table-wrapper { padding: 12px; background: #fff; border-radius: 8px; }
+.dept-table { width: 100%; }
+.dept-name-cell { display: flex; align-items: center; gap: 8px; }
+.dept-icon { color: #E6A23C; font-size: 16px; }
+.dept-name { font-weight: 500; color: #303133; }
+.dept-code { color: #606266; font-family: monospace; }
+.status-tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.action-btns { display: flex; gap: 6px; justify-content: center; }
+.text-gray { color: #c0c4cc; }
 </style>
