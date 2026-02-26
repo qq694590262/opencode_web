@@ -23,40 +23,77 @@
       />
     </div>
 
-    <!-- 部门树 -->
-    <div class="dept-tree-wrapper">
-      <el-tree
-        :data="filteredDepartments"
-        :props="treeProps"
-        node-key="id"
-        :expand-on-click-node="false"
-        :default-expand-all="true"
+    <!-- 部门树形表格 -->
+    <div class="dept-table-wrapper">
+      <el-table 
+        :data="filteredDepartments" 
+        row-key="id"
+        stripe 
+        border
         v-loading="loading"
-        class="dept-tree"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        class="dept-table"
       >
-        <template #default="{ node, data }">
-          <div class="dept-node">
-            <div class="dept-info">
+        <el-table-column prop="name" label="部门名称" min-width="220">
+          <template #default="{ row, treeNode }">
+            <div class="dept-name-cell">
+              <span 
+                class="tree-arrow" 
+                :class="{ expanded: treeNode.expanded }"
+                @click="treeNode.expanded = !treeNode.expanded"
+              >
+                <el-icon><ArrowRight v-if="row.children && row.children.length" /></el-icon>
+              </span>
               <el-icon class="dept-icon"><OfficeBuilding /></el-icon>
-              <span class="dept-name">{{ data.name }}</span>
-              <span class="dept-code">({{ data.code }})</span>
+              <span class="dept-name">{{ row.name }}</span>
             </div>
-            <div class="dept-actions">
-              <el-tag v-if="data.status === 1" type="success" size="small">启用</el-tag>
-              <el-tag v-else type="danger" size="small">禁用</el-tag>
-              <el-button type="primary" size="small" link @click.stop="addChild(data)" v-if="data.status === 1">
-                <el-icon><Plus /></el-icon>添加
-              </el-button>
-              <el-button type="primary" size="small" link @click.stop="editDept(data)">
-                <el-icon><Edit /></el-icon>编辑
-              </el-button>
-              <el-button type="danger" size="small" link @click.stop="deleteDept(data)">
-                <el-icon><Delete /></el-icon>删除
-              </el-button>
+          </template>
+        </el-table-column>
+        
+        <el-table-column prop="code" label="部门编码" width="140" align="center">
+          <template #default="{ row }">
+            <span class="dept-code">{{ row.code }}</span>
+          </template>
+        </el-table-column>
+        
+        <el-table-column prop="leader" label="负责人" width="120" align="center">
+          <template #default="{ row }">
+            <span v-if="row.leader">{{ row.leader }}</span>
+            <span v-else class="text-gray">-</span>
+          </template>
+        </el-table-column>
+        
+        <el-table-column prop="phone" label="联系电话" width="140" align="center">
+          <template #default="{ row }">
+            <span v-if="row.phone">{{ row.phone }}</span>
+            <span v-else class="text-gray">-</span>
+          </template>
+        </el-table-column>
+        
+        <el-table-column prop="status" label="状态" width="80" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
+              {{ row.status === 1 ? '启用' : '禁用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        
+        <el-table-column label="操作" width="140" align="center" fixed="right">
+          <template #default="{ row }">
+            <div class="action-btns">
+              <el-tooltip content="添加子部门" placement="top">
+                <el-button type="primary" :icon="Plus" circle size="small" @click="addChild(row)" v-if="row.status === 1" />
+              </el-tooltip>
+              <el-tooltip content="编辑" placement="top">
+                <el-button type="warning" :icon="Edit" circle size="small" @click="editDept(row)" />
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button type="danger" :icon="Delete" circle size="small" @click="deleteDept(row)" />
+              </el-tooltip>
             </div>
-          </div>
-        </template>
-      </el-tree>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
     <!-- 部门表单弹窗 -->
@@ -121,7 +158,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { OfficeBuilding, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
+import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
 import { departmentApi } from '../api'
 
 export default {
@@ -135,11 +172,6 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
-    
-    const treeProps = {
-      children: 'children',
-      label: 'name'
-    }
     
     const formData = ref({
       id: null,
@@ -311,7 +343,6 @@ export default {
       formData,
       rules,
       parentName,
-      treeProps,
       openAddDialog,
       addChild,
       editDept,
@@ -322,7 +353,8 @@ export default {
       Plus,
       Search,
       Edit,
-      Delete
+      Delete,
+      ArrowRight
     }
   }
 }
@@ -378,39 +410,35 @@ export default {
   max-width: 320px;
 }
 
-.dept-tree-wrapper {
+.dept-table-wrapper {
   background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.dept-tree {
-  background: transparent;
-}
-
-.dept-tree :deep(.el-tree-node__content) {
-  height: 48px;
   border-radius: 8px;
-  margin-bottom: 4px;
+  padding: 16px;
 }
 
-.dept-tree :deep(.el-tree-node__content:hover) {
-  background: #f5f7fa;
-}
-
-.dept-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
+.dept-table {
   width: 100%;
 }
 
-.dept-info {
+.dept-name-cell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.tree-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  color: #909399;
+  transition: transform 0.2s;
+}
+
+.tree-arrow.expanded {
+  transform: rotate(90deg);
 }
 
 .dept-icon {
@@ -424,14 +452,18 @@ export default {
 }
 
 .dept-code {
-  color: #909399;
-  font-size: 12px;
+  color: #606266;
+  font-family: monospace;
 }
 
-.dept-actions {
+.text-gray {
+  color: #c0c4cc;
+}
+
+.action-btns {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 4px;
 }
 
 .dept-form :deep(.el-form-item__label) {
