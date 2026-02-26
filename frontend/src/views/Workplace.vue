@@ -18,16 +18,11 @@
           <span class="quick-arrow">→</span>
         </router-link>
       </div>
-
+    </div>
   </div>
 </template>
 
-ZW|<script>
-import NoteWidget from '../components/NoteWidget.vue'
-import TodoWidget from '../components/TodoWidget.vue'
-
-export default {
-  components: { NoteWidget, TodoWidget },
+<script>
 export default {
   name: 'Workplace',
   setup() {
@@ -40,13 +35,8 @@ export default {
       { icon: '📊', name: '报表中心', desc: '查看统计报表', route: '/dashboard/reports' }
     ]
 
-
-
     return {
       quickLinks
-    }
-      quickLinks
-    }
     }
   }
 }
@@ -134,16 +124,6 @@ export default {
 }
 
 
-
-/* 便签和待办 */
-.widgets-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-JB|/* 响应式 */
 
 /* 响应式 */
 @media (max-width: 1200px) {

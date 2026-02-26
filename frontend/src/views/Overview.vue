@@ -164,7 +164,21 @@
       </div>
     </div>
 
-    YH|    </div>
+    <!-- 最近活动 -->
+    <div class="activity-section">
+      <h3>🔔 最近活动</h3>
+      <div class="activity-list">
+        <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
+          <div class="activity-icon" :style="{ background: activity.color }">
+            {{ activity.icon }}
+          </div>
+          <div class="activity-content">
+            <p class="activity-text">{{ activity.text }}</p>
+            <span class="activity-time">{{ activity.time }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -172,9 +186,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { dashboardApi } from '../api'
 import { showToast } from '../components/Toast.vue'
+import NoteWidget from '../components/NoteWidget.vue'
+import TodoWidget from '../components/TodoWidget.vue'
 
-
-
+export default {
+  components: { NoteWidget, TodoWidget },
 
   name: 'Overview',
   setup() {
@@ -271,6 +287,14 @@ import { showToast } from '../components/Toast.vue'
       refreshData(false) // 初始加载不显示提示
     })
 
+    const recentActivities = [
+      { icon: '✅', text: '张三完成了任务 "完成用户模块API开发"', time: '5分钟前', color: '#dcfce7' },
+      { icon: '📁', text: '李四创建了项目 "电商平台重构"', time: '1小时前', color: '#e0f2fe' },
+      { icon: '👤', text: '王五更新了个人资料', time: '2小时前', color: '#f3e8ff' },
+      { icon: '📄', text: '赵六上传了文档 "API接口文档V1.0"', time: '3小时前', color: '#fef3c7' },
+      { icon: '✏️', text: '钱七编辑了文章 "Vue3最佳实践"', time: '5小时前', color: '#fee2e2' }
+    ]
+
     return {
       refreshing,
       selectedRange,
@@ -283,6 +307,7 @@ import { showToast } from '../components/Toast.vue'
       taskStats,
       taskCompletionRate,
       departmentStats,
+      recentActivities,
       refreshData
     }
   }
@@ -748,9 +773,76 @@ import { showToast } from '../components/Toast.vue'
   min-width: 24px;
 }
 
-TR|}
+/* 便签和待办 */
+.widgets-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
 
-JB|/* 响应式 */
+/* 最近活动 */
+.activity-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.activity-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.activity-item:hover {
+  background: #f1f5f9;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-text {
+  font-size: 14px;
+  color: #334155;
+  margin: 0 0 4px 0;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* 响应式 */
 
 /* 响应式 */
 @media (max-width: 1200px) {
@@ -766,9 +858,10 @@ JB|/* 响应式 */
     grid-column: span 1;
   }
 
-  VP|}
-
-RH|@media (max-width: 768px)
+  .widgets-row {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 768px) {
   .stats-grid {
