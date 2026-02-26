@@ -30,6 +30,7 @@
       stripe 
       class="dept-table"
       v-loading="loading"
+      :expand-row-keys="expandedKeys"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <el-table-column prop="name" label="部门名称" min-width="200">

@@ -151,15 +151,22 @@ export const dashboardApi = {
   getCharts: () => request('/dashboard/charts'),
   getSystemInfo: () => request('/dashboard/system-info'),
   // 便签API
-  getNotes: () => request('/dashboard/notes'),
+  getNotes: (userId) => request(`/dashboard/notes?userId=${userId || 1}`),
   saveNote: (data) => request('/dashboard/notes', { method: 'POST', body: JSON.stringify(data) }),
   updateNote: (id, data) => request(`/dashboard/notes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteNote: (id) => request(`/dashboard/notes/${id}`, { method: 'DELETE' }),
   // 待办API
-  getTodos: () => request('/dashboard/todos'),
+  getTodos: (userId) => request(`/dashboard/todos?userId=${userId || 1}`),
   saveTodo: (data) => request('/dashboard/todos', { method: 'POST', body: JSON.stringify(data) }),
   updateTodo: (id, data) => request(`/dashboard/todos/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteTodo: (id) => request(`/dashboard/todos/${id}`, { method: 'DELETE' }),
+  // 公告API
+  getNotices: (userId) => request(`/dashboard/notices?userId=${userId || 1}`),
+  getNoticeById: (id) => request(`/dashboard/notices/${id}`),
+  saveNotice: (data) => request('/dashboard/notices', { method: 'POST', body: JSON.stringify(data) }),
+  updateNotice: (id, data) => request(`/dashboard/notices/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteNotice: (id) => request(`/dashboard/notices/${id}`, { method: 'DELETE' }),
+  markNoticeAsRead: (id) => request(`/dashboard/notices/${id}/read`, { method: 'PUT' }),
 }
 
 export const calendarApi = {

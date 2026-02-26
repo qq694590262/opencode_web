@@ -21,6 +21,8 @@ public class Todo {
     
     private LocalDateTime dueDate;
     
+    private Long userId;
+    
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
     

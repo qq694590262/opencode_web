@@ -25,7 +25,7 @@
             <el-tag :type="getType(notice.type)" size="small">{{ getTypeText(notice.type) }}</el-tag>
             <span class="title">{{ notice.title }}</span>
           </div>
-          <span class="notice-time">{{ notice.createTime }}</span>
+          <span class="notice-time">{{ formatTime(notice.createTime) }}</span>
         </div>
         <p class="notice-content">{{ notice.content }}</p>
         <div class="notice-footer">
@@ -53,7 +53,7 @@
       <div class="notice-detail" v-if="currentNotice">
         <div class="detail-header">
           <el-tag :type="getType(currentNotice.type)" size="small">{{ getTypeText(currentNotice.type) }}</el-tag>
-          <span class="time">{{ currentNotice.createTime }}</span>
+          <span class="time">{{ formatTime(currentNotice.createTime) }}</span>
         </div>
         <div class="detail-content">{{ currentNotice.content }}</div>
         <div class="detail-footer">
@@ -74,53 +74,22 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { BellFilled, User, View } from '@element-plus/icons-vue'
+import { dashboardApi } from '../api'
+import { getUserInfo } from '../auth'
 
 export default {
   name: 'Notices',
+  components: { BellFilled, User, View },
   setup() {
     const loading = ref(false)
     const notices = ref([])
     const detailVisible = ref(false)
     const currentNotice = ref(null)
     
-    const mockNotices = [
-      {
-        id: 1,
-        title: '系统升级通知',
-        content: '为了提供更好的服务，系统将于2024年1月15日凌晨2:00-4:00进行升级维护，届时部分功能可能无法使用，请提前做好工作安排，感谢您的理解与支持！',
-        type: 'warning',
-        publisher: '管理员',
-        createTime: '2024-01-10 10:30',
-        views: 156
-      },
-      {
-        id: 2,
-        title: '新功能上线公告',
-        content: '本次更新新增了部门管理、消息中心等功能，优化了用户体验，欢迎大家试用并提出宝贵意见！',
-        type: 'success',
-        publisher: '管理员',
-        createTime: '2024-01-08 15:20',
-        views: 243
-      },
-      {
-        id: 3,
-        title: '关于加强账号安全的通知',
-        content: '为保障账号安全，建议定期修改密码，密码长度不少于8位，包含字母、数字和特殊字符。如发现异常登录，请及时联系管理员。',
-        type: 'danger',
-        publisher: '安全中心',
-        createTime: '2024-01-05 09:00',
-        views: 89
-      },
-      {
-        id: 4,
-        title: '春节放假安排',
-        content: '根据国家法定假日安排，春节期间放假时间为2月9日至2月15日，放假期间如有紧急事务，请联系值班人员。',
-        type: 'info',
-        publisher: '行政部',
-        createTime: '2024-01-02 14:00',
-        views: 312
-      }
-    ]
+    const getCurrentUserId = () => {
+      const user = getUserInfo()
+      return user?.id || 1
+    }
     
     const getType = (type) => {
       const types = { warning: 'warning', success: 'success', danger: 'danger', info: 'info' }
@@ -132,11 +101,20 @@ export default {
       return texts[type] || '通知'
     }
     
+    const formatTime = (time) => {
+      if (!time) return ''
+      const date = new Date(time)
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+    }
+    
     const loadNotices = async () => {
       loading.value = true
       try {
-        await new Promise(resolve => setTimeout(resolve, 300))
-        notices.value = mockNotices
+        const userId = getCurrentUserId()
+        const res = await dashboardApi.getNotices(userId)
+        if (res.code === 200) {
+          notices.value = res.data || []
+        }
       } catch (error) {
         console.error('获取公告失败:', error)
       } finally {
@@ -144,9 +122,15 @@ export default {
       }
     }
     
-    const viewNotice = (notice) => {
+    const viewNotice = async (notice) => {
       currentNotice.value = notice
-      notice.views++
+      // 标记为已读
+      try {
+        await dashboardApi.markNoticeAsRead(notice.id)
+        notice.views++
+      } catch (error) {
+        console.error('标记已读失败:', error)
+      }
       detailVisible.value = true
     }
     
@@ -159,10 +143,8 @@ export default {
       currentNotice,
       getType,
       getTypeText,
-      viewNotice,
-      BellFilled,
-      User,
-      View
+      formatTime,
+      viewNotice
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.opencode.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.opencode.entity.Todo;
 import com.opencode.mapper.TodoMapper;
@@ -12,8 +13,13 @@ import java.util.List;
 public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements TodoService {
     
     @Override
-    public List<Todo> getAllTodos() {
-        return this.list();
+    public List<Todo> getAllTodos(Long userId) {
+        LambdaQueryWrapper<Todo> wrapper = new LambdaQueryWrapper<>();
+        if (userId != null && userId > 0) {
+            wrapper.eq(Todo::getUserId, userId);
+        }
+        wrapper.orderByDesc(Todo::getCreateTime);
+        return this.list(wrapper);
     }
     
     @Override

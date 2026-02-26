@@ -69,6 +69,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { dashboardApi } from '../api'
+import { getUserInfo } from '../auth'
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -93,9 +94,15 @@ export default {
       '#ffedd5', // 橙色
     ]
     
+    const getCurrentUserId = () => {
+      const user = getUserInfo()
+      return user?.id || 1
+    }
+    
     const loadNotes = async () => {
       try {
-        const res = await dashboardApi.getNotes()
+        const userId = getCurrentUserId()
+        const res = await dashboardApi.getNotes(userId)
         if (res.code === 200) {
           notes.value = res.data || []
         }
@@ -106,11 +113,12 @@ export default {
     
     const handleSave = async () => {
       try {
+        const userId = getCurrentUserId()
         if (editingNote.value) {
           await dashboardApi.updateNote(editingNote.value.id, noteForm.value)
           ElMessage.success('更新成功')
         } else {
-          await dashboardApi.saveNote(noteForm.value)
+          await dashboardApi.saveNote({ ...noteForm.value, userId })
           ElMessage.success('添加成功')
         }
         showAddDialog.value = false

@@ -78,8 +78,9 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { dashboardApi } from '../api'
+import { getUserInfo } from '../auth'
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -97,9 +98,15 @@ export default {
       dueDate: null
     })
     
+    const getCurrentUserId = () => {
+      const user = getUserInfo()
+      return user?.id || 1
+    }
+    
     const loadTodos = async () => {
       try {
-        const res = await dashboardApi.getTodos()
+        const userId = getCurrentUserId()
+        const res = await dashboardApi.getTodos(userId)
         if (res.code === 200) {
           todos.value = res.data || []
         }
@@ -114,11 +121,12 @@ export default {
         return
       }
       try {
+        const userId = getCurrentUserId()
         if (editingTodo.value) {
           await dashboardApi.updateTodo(editingTodo.value.id, todoForm.value)
           ElMessage.success('更新成功')
         } else {
-          await dashboardApi.saveTodo(todoForm.value)
+          await dashboardApi.saveTodo({ ...todoForm.value, userId })
           ElMessage.success('添加成功')
         }
         showAddDialog.value = false

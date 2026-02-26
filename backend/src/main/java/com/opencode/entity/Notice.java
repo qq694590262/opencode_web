@@ -6,8 +6,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("sys_note")
-public class Note {
+@TableName("sys_notice")
+public class Notice {
     @TableId(type = IdType.AUTO)
     private Long id;
     
@@ -15,11 +15,15 @@ public class Note {
     
     private String content;
     
-    private String color;
+    private String type;
     
-    private Integer position;
+    private String publisher;
     
     private Long userId;
+    
+    private Integer isRead;
+    
+    private Integer views;
     
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

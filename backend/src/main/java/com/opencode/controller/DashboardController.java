@@ -22,20 +22,18 @@ public class DashboardController {
     private final LogService logService;
     private final NoteService noteService;
     private final TodoService todoService;
+    private final NoticeService noticeService;
     
     @GetMapping("/overview")
     public Result<Map<String, Object>> getOverview() {
         Map<String, Object> data = new HashMap<>();
         
-        // 从数据库统计真实数据
         long totalProjects = projectService.count();
         
-        // 查询待办任务数量
         LambdaQueryWrapper<Task> taskWrapper = new LambdaQueryWrapper<>();
         taskWrapper.eq(Task::getStatus, "todo");
         long pendingTasks = taskService.count(taskWrapper);
         
-        // 查询活跃用户数量
         LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
         userWrapper.eq(User::getStatus, 1);
         long activeUsers = userService.count(userWrapper);
@@ -106,7 +104,6 @@ public class DashboardController {
     public Result<Map<String, Object>> getCharts() {
         Map<String, Object> data = new HashMap<>();
         
-        // 从数据库统计项目状态分布
         LambdaQueryWrapper<Project> activeProjectWrapper = new LambdaQueryWrapper<>();
         activeProjectWrapper.eq(Project::getStatus, "active");
         long activeProjects = projectService.count(activeProjectWrapper);
@@ -156,7 +153,6 @@ public class DashboardController {
         data.put("onlineUsers", 12);
         data.put("dbStatus", "正常");
         
-        // 资源使用情况（模拟数据）
         data.put("cpuUsage", 45);
         data.put("memoryUsage", 62);
         data.put("memoryUsed", "4.2");
@@ -168,7 +164,6 @@ public class DashboardController {
         data.put("jvmUsed", "512");
         data.put("jvmTotal", "1024");
         
-        // 系统版本信息
         data.put("version", "v1.0.0");
         data.put("javaVersion", System.getProperty("java.version"));
         data.put("os", System.getProperty("os.name"));
@@ -180,13 +175,14 @@ public class DashboardController {
     
     // ========== 便签 API ==========
     @GetMapping("/notes")
-    public Result<List<Note>> getNotes() {
-        List<Note> notes = noteService.getAllNotes();
+    public Result<List<Note>> getNotes(@RequestParam(required = false, defaultValue = "1") Long userId) {
+        List<Note> notes = noteService.getAllNotes(userId);
         return Result.success(notes);
     }
     
     @PostMapping("/notes")
-    public Result<Boolean> saveNote(@RequestBody Note note) {
+    public Result<Boolean> saveNote(@RequestBody Note note, @RequestParam(required = false, defaultValue = "1") Long userId) {
+        note.setUserId(userId);
         boolean result = noteService.saveNote(note);
         return Result.success(result);
     }
@@ -206,13 +202,14 @@ public class DashboardController {
     
     // ========== 待办事项 API ==========
     @GetMapping("/todos")
-    public Result<List<Todo>> getTodos() {
-        List<Todo> todos = todoService.getAllTodos();
+    public Result<List<Todo>> getTodos(@RequestParam(required = false, defaultValue = "1") Long userId) {
+        List<Todo> todos = todoService.getAllTodos(userId);
         return Result.success(todos);
     }
     
     @PostMapping("/todos")
-    public Result<Boolean> saveTodo(@RequestBody Todo todo) {
+    public Result<Boolean> saveTodo(@RequestBody Todo todo, @RequestParam(required = false, defaultValue = "1") Long userId) {
+        todo.setUserId(userId);
         boolean result = todoService.saveTodo(todo);
         return Result.success(result);
     }
@@ -227,6 +224,44 @@ public class DashboardController {
     @DeleteMapping("/todos/{id}")
     public Result<Boolean> deleteTodo(@PathVariable Long id) {
         boolean result = todoService.deleteTodo(id);
+        return Result.success(result);
+    }
+    
+    // ========== 公告 API ==========
+    @GetMapping("/notices")
+    public Result<List<Notice>> getNotices(@RequestParam(required = false, defaultValue = "1") Long userId) {
+        List<Notice> notices = noticeService.getNotices(userId);
+        return Result.success(notices);
+    }
+    
+    @GetMapping("/notices/{id}")
+    public Result<Notice> getNoticeById(@PathVariable Long id) {
+        Notice notice = noticeService.getNoticeById(id);
+        return Result.success(notice);
+    }
+    
+    @PostMapping("/notices")
+    public Result<Boolean> saveNotice(@RequestBody Notice notice) {
+        boolean result = noticeService.saveNotice(notice);
+        return Result.success(result);
+    }
+    
+    @PutMapping("/notices/{id}")
+    public Result<Boolean> updateNotice(@PathVariable Long id, @RequestBody Notice notice) {
+        notice.setId(id);
+        boolean result = noticeService.updateNotice(notice);
+        return Result.success(result);
+    }
+    
+    @DeleteMapping("/notices/{id}")
+    public Result<Boolean> deleteNotice(@PathVariable Long id) {
+        boolean result = noticeService.deleteNotice(id);
+        return Result.success(result);
+    }
+    
+    @PutMapping("/notices/{id}/read")
+    public Result<Boolean> markNoticeAsRead(@PathVariable Long id) {
+        boolean result = noticeService.markAsRead(id);
         return Result.success(result);
     }
     

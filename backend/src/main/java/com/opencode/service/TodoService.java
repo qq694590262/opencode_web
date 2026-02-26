@@ -6,7 +6,7 @@ import com.opencode.entity.Todo;
 import java.util.List;
 
 public interface TodoService extends IService<Todo> {
-    List<Todo> getAllTodos();
+    List<Todo> getAllTodos(Long userId);
     boolean saveTodo(Todo todo);
     boolean updateTodo(Todo todo);
     boolean deleteTodo(Long id);
