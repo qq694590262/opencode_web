@@ -164,11 +164,7 @@
       </div>
     </div>
 
-    <!-- 便签和待办 -->
-    <div class="widgets-row">
-      <NoteWidget />
-      <TodoWidget />
-    </div>
+    YH|    </div>
   </div>
 </template>
 
@@ -176,11 +172,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { dashboardApi } from '../api'
 import { showToast } from '../components/Toast.vue'
-import NoteWidget from '../components/NoteWidget.vue'
-import TodoWidget from '../components/TodoWidget.vue'
 
-export default {
-  components: { NoteWidget, TodoWidget },
+
+
 
   name: 'Overview',
   setup() {
@@ -754,12 +748,9 @@ export default {
   min-width: 24px;
 }
 
-/* 便签和待办 */
-.widgets-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
+TR|}
+
+JB|/* 响应式 */
 
 /* 响应式 */
 @media (max-width: 1200px) {
@@ -775,10 +766,9 @@ export default {
     grid-column: span 1;
   }
 
-  .widgets-row {
-    grid-template-columns: 1fr;
-  }
-}
+  VP|}
+
+RH|@media (max-width: 768px)
 
 @media (max-width: 768px) {
   .stats-grid {
