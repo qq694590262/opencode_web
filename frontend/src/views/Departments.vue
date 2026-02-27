@@ -144,12 +144,12 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
+import { OfficeBuilding, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
 import { departmentApi } from '../api'
 
 export default {
   name: 'Departments',
-  components: { ArrowRight },
+
   setup() {
     const loading = ref(false)
     const saving = ref(false)
@@ -413,36 +413,7 @@ export default {
   max-width: 320px;
 }
 
-/* 树形表格样式 */
-.dept-name-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tree-arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  color: #409EFF;
-  transition: transform 0.2s;
-}
-
-.tree-arrow .el-icon {
-  font-size: 14px;
-}
-
-.tree-arrow.expanded {
-  transform: rotate(90deg);
-}
-
-.dept-name-text {
-  color: #303133;
-  font-weight: 500;
-}
+/* 表格样式 */
 
 .text-gray {
   color: #cbd5e1;
