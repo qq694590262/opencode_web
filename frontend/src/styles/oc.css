@@ -1,0 +1,7 @@
+/* Namespace utilities for departments and common components */
+.oc-dept-name-cell { display: inline-flex; align-items: center; gap: 6px; }
+.oc-dept-name { font-weight: 700; color: #1f1f1f; }
+.oc-dept-icon { color: #3c8dbc; }
+.oc-dept-code { color: #606266; font-family: monospace; }
+.oc-status { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.oc-action-btns { display: flex; gap: 6px; justify-content: center; }

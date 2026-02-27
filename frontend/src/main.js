@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+import './styles/oc.css'
+import './styles/oc-utilities.css'
 import './styles/global.css'
 import { createRouter, createWebHistory } from 'vue-router'
 import ElementPlus from 'element-plus'

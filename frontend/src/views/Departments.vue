@@ -24,7 +24,7 @@
     </div>
 
     <!-- 部门树形表格 -->
-    <div class="dept-table-wrapper">
+    <div class="oc-dept-table-wrapper oc-dept-card">
       <el-table
         :data="filteredDepartments"
         row-key="id"
@@ -35,7 +35,7 @@
         class="dept-table"
       >
         <!-- 第一列：部门名称，使用树形列，箭头与名称同行 -->
-        <el-table-column prop="name" label="部门名称" min-width="240" type="tree"></el-table-column>
+        <el-table-column prop="name" label="部门名称" min-width="240" type="tree" class-name="oc-dept-name-cell"></el-table-column>
 
         <el-table-column prop="code" label="部门编码" width="140" align="center" />
 
