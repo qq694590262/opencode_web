@@ -36,21 +36,9 @@
         @expand-change="handleExpandChange"
         class="dept-table"
       >
-        <!-- 第一列：部门名称，带展开箭头 -->
-        <el-table-column prop="name" label="部门名称" min-width="220">
-          <template #default="{ row }">
-            <div class="dept-name-cell">
-              <span 
-                v-if="row.children && row.children.length > 0"
-                class="tree-arrow"
-                :class="{ expanded: expandedRowKeys.includes(row.id) }"
-              >
-                <el-icon><ArrowRight /></el-icon>
-              </span>
-              <span class="dept-name-text">{{ row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
+        <!-- 第一列：部门名称 -->
+        <el-table-column prop="name" label="部门名称" min-width="220" />
+
 
         <el-table-column prop="code" label="部门编码" width="140" align="center" />
 
