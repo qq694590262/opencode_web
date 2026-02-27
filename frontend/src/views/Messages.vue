@@ -274,167 +274,25 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.page-title .el-icon {
-  color: #409EFF;
-}
-
-.page-desc {
-  font-size: 14px;
-  color: #909399;
-  margin: 6px 0 0 0;
-}
-
-.message-tabs {
-  margin-bottom: 20px;
-}
-
-.tab-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.message-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.message-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.message-item:hover {
-  background: #f5f7fa;
-}
-
-.message-item.unread {
-  background: #f0f9ff;
-}
-
-.message-item.unread::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 60%;
-  background: #409EFF;
-  border-radius: 0 4px 4px 0;
-}
-
-.message-icon {
-  flex-shrink: 0;
-}
-
-.message-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.sender {
-  font-size: 14px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.time {
-  font-size: 12px;
-  color: #909399;
-}
-
-.message-title {
-  font-size: 15px;
-  font-weight: 500;
-  color: #303133;
-  margin-bottom: 4px;
-}
-
-.message-text {
-  font-size: 13px;
-  color: #606266;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.message-status {
-  flex-shrink: 0;
-}
-
-/* 详情弹窗 */
-.message-detail .detail-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.sender-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.sender-info .sender {
-  font-size: 15px;
-}
-
-.sender-info .time {
-  font-size: 13px;
-}
-
-.message-detail .detail-content {
-  font-size: 15px;
-  color: #303133;
-  line-height: 1.8;
-}
+/* Minimal overrides - most styles now in global.css */
+.message-tabs { margin-bottom: 20px; }
+.tab-label { display: flex; align-items: center; gap: 6px; }
+.message-list { display: flex; flex-direction: column; gap: 12px; }
+.message-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: #fff; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; position: relative; }
+.message-item:hover { background: #f5f7fa; }
+.message-item.unread { background: #f0f9ff; }
+.message-item.unread::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 4px; height: 60%; background: #409EFF; border-radius: 0 4px 4px 0; }
+.message-icon { flex-shrink: 0; }
+.message-content { flex: 1; min-width: 0; }
+.message-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.sender { font-size: 14px; font-weight: 600; color: #303133; }
+.time { font-size: 12px; color: #909399; }
+.message-title { font-size: 15px; font-weight: 500; color: #303133; margin-bottom: 4px; }
+.message-text { font-size: 13px; color: #606266; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.message-status { flex-shrink: 0; }
+.message-detail .detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #ebeef5; }
+.sender-info { display: flex; flex-direction: column; }
+.sender-info .sender { font-size: 15px; }
+.sender-info .time { font-size: 13px; }
+.message-detail .detail-content { font-size: 15px; color: #303133; line-height: 1.8; }
 </style>

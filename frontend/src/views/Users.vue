@@ -330,83 +330,11 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.page-title .el-icon {
-  color: #409EFF;
-}
-
-.page-desc {
-  font-size: 14px;
-  color: #909399;
-  margin: 6px 0 0 0;
-}
-
-.search-bar {
-  margin-bottom: 20px;
-}
-
-.search-input {
-  max-width: 320px;
-}
-
-.user-table {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-detail {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #303133;
-}
-
-.user-username {
-  font-size: 12px;
-  color: #909399;
-}
-
-.user-form :deep(.el-form-item__label) {
-  font-weight: 500;
-}
+/* Minimal overrides - most styles now in global.css */
+.user-table { border-radius: 12px; overflow: hidden; }
+.user-info { display: flex; align-items: center; gap: 12px; }
+.user-detail { display: flex; flex-direction: column; }
+.user-name { font-size: 14px; font-weight: 500; color: #303133; }
+.user-username { font-size: 12px; color: #909399; }
+.user-form :deep(.el-form-item__label) { font-weight: 500; }
 </style>

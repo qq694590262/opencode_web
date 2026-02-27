@@ -151,142 +151,20 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-header {
-  margin-bottom: 24px;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.page-title .el-icon {
-  color: #E6A23C;
-}
-
-.page-desc {
-  font-size: 14px;
-  color: #909399;
-  margin: 6px 0 0 0;
-}
-
-.notices-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.notice-card {
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.notice-card:hover {
-  transform: translateY(-2px);
-}
-
-.notice-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.notice-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.notice-time {
-  font-size: 13px;
-  color: #909399;
-}
-
-.notice-content {
-  font-size: 14px;
-  color: #606266;
-  line-height: 1.6;
-  margin: 0 0 12px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.notice-footer {
-  display: flex;
-  gap: 20px;
-  font-size: 13px;
-  color: #909399;
-}
-
-.notice-footer span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* 详情弹窗 */
-.notice-detail .detail-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.notice-detail .time {
-  font-size: 14px;
-  color: #909399;
-}
-
-.notice-detail .detail-content {
-  font-size: 15px;
-  color: #303133;
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-
-.notice-detail .detail-footer {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 16px;
-  border-top: 1px solid #ebeef5;
-  font-size: 14px;
-  color: #909399;
-}
-
-.notice-detail .detail-footer span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+/* Minimal overrides - most styles now in global.css */
+.notices-list { display: flex; flex-direction: column; gap: 16px; }
+.notice-card { border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
+.notice-card:hover { transform: translateY(-2px); }
+.notice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.notice-title { display: flex; align-items: center; gap: 10px; }
+.title { font-size: 16px; font-weight: 600; color: #303133; }
+.notice-time { font-size: 13px; color: #909399; }
+.notice-content { font-size: 14px; color: #606266; line-height: 1.6; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.notice-footer { display: flex; gap: 20px; font-size: 13px; color: #909399; }
+.notice-footer span { display: flex; align-items: center; gap: 4px; }
+.notice-detail .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #ebeef5; }
+.notice-detail .time { font-size: 14px; color: #909399; }
+.notice-detail .detail-content { font-size: 15px; color: #303133; line-height: 1.8; margin-bottom: 20px; }
+.notice-detail .detail-footer { display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid #ebeef5; font-size: 14px; color: #909399; }
+.notice-detail .detail-footer span { display: flex; align-items: center; gap: 6px; }
 </style>

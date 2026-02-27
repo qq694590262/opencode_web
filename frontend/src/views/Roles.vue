@@ -235,138 +235,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.page-title .el-icon {
-  color: #E6A23C;
-}
-
-.page-desc {
-  font-size: 14px;
-  color: #909399;
-  margin: 6px 0 0 0;
-}
-
-.search-bar {
-  margin-bottom: 24px;
-}
-
-.search-input {
-  max-width: 320px;
-}
-
-.roles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.role-card {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.role-card:hover {
-  transform: translateY(-4px);
-}
-
-.role-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 12px;
-}
-
-.role-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #409EFF 0%, #67C23A 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.role-icon {
-  font-size: 24px;
-  color: #fff;
-}
-
-.role-info {
-  flex: 1;
-}
-
-.role-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 4px 0;
-}
-
-.role-code {
-  font-size: 12px;
-  color: #909399;
-  font-family: monospace;
-}
-
-.role-desc {
-  font-size: 14px;
-  color: #606266;
-  margin: 0 0 16px 0;
-  line-height: 1.5;
-}
-
-.role-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid #ebeef5;
-}
-
-.role-users {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #909399;
-}
-
-.role-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.role-form :deep(.el-form-item__label) {
-  font-weight: 500;
-}
+/* Minimal overrides - most styles now in global.css */
+.roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.role-card { border-radius: 12px; transition: all 0.3s ease; }
+.role-card:hover { transform: translateY(-4px); }
+.role-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.role-icon-wrap { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #409EFF 0%, #67C23A 100%); display: flex; align-items: center; justify-content: center; }
+.role-icon { font-size: 24px; color: #fff; }
+.role-info { flex: 1; }
+.role-name { font-size: 16px; font-weight: 600; color: #303133; margin: 0 0 4px 0; }
+.role-code { font-size: 12px; color: #909399; font-family: monospace; }
+.role-desc { font-size: 14px; color: #606266; margin: 0 0 16px 0; line-height: 1.5; }
+.role-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #ebeef5; }
+.role-users { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #909399; }
+.role-actions { display: flex; gap: 8px; }
+.role-form :deep(.el-form-item__label) { font-weight: 500; }
 </style>
