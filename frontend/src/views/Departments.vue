@@ -31,11 +31,26 @@
         stripe
         border
         v-loading="loading"
-        :tree-props="{ children: 'children' }"
+        :expand-row-keys="expandedRowKeys"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        @expand-change="handleExpandChange"
         class="dept-table"
       >
-        <!-- 第一列：部门名称，使用树形列，箭头与名称同行 -->
-        <el-table-column prop="name" label="部门名称" min-width="240" type="tree" class-name="oc-dept-name-cell"></el-table-column>
+        <!-- 第一列：部门名称，带展开箭头 -->
+        <el-table-column prop="name" label="部门名称" min-width="220">
+          <template #default="{ row }">
+            <div class="dept-name-cell">
+              <span 
+                v-if="row.children && row.children.length > 0"
+                class="tree-arrow"
+                :class="{ expanded: expandedRowKeys.includes(row.id) }"
+              >
+                <el-icon><ArrowRight /></el-icon>
+              </span>
+              <span class="dept-name-text">{{ row.name }}</span>
+            </div>
+          </template>
+        </el-table-column>
 
         <el-table-column prop="code" label="部门编码" width="140" align="center" />
 
@@ -61,7 +76,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="140" align="center" fixed="right">
+        <el-table-column label="操作" width="180" align="center" fixed="right">
           <template #default="{ row }">
             <div class="action-btns">
               <el-tooltip content="添加子部门" placement="top">
@@ -141,11 +156,12 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { OfficeBuilding, Plus, Search, Edit, Delete } from '@element-plus/icons-vue'
+import { OfficeBuilding, Plus, Search, Edit, Delete, ArrowRight } from '@element-plus/icons-vue'
 import { departmentApi } from '../api'
 
 export default {
   name: 'Departments',
+  components: { ArrowRight },
   setup() {
     const loading = ref(false)
     const saving = ref(false)
@@ -155,41 +171,72 @@ export default {
     const isEdit = ref(false)
     const formRef = ref(null)
     const parentName = ref('')
-    const formData = ref({ id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 })
+    const expandedRowKeys = ref([])
+    
+    const formData = ref({
+      id: null,
+      parentId: null,
+      name: '',
+      code: '',
+      leader: '',
+      phone: '',
+      sort: 0,
+      status: 1
+    })
+    
     const rules = {
       name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
       code: [{ required: true, message: '请输入部门编码', trigger: 'blur' }]
     }
-    const treeProps = { children: 'children', hasChildren: 'hasChildren' }
-
+    
     // 递归构建树形结构
     const buildTree = (list, parentId = null) => {
       return list
         .filter(item => {
           if (parentId === null || parentId === 0) {
-            return item.parentId === null || item.parentId === 0 || item.parentId === undefined
+            return item.parentId === null || item.parentId === 0
           }
           return item.parentId === parentId
         })
-        .map(item => ({ ...item, children: buildTree(list, item.id) }))
+        .map(item => ({
+          ...item,
+          children: buildTree(list, item.id)
+        }))
         .sort((a, b) => (a.sort || 0) - (b.sort || 0))
     }
-
+    
+    // 获取所有有子部门的ID（用于默认展开）
+    const getExpandedIds = (list) => {
+      const ids = []
+      list.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          ids.push(item.id)
+        }
+      })
+      return ids
+    }
+    
     const filteredDepartments = computed(() => {
-      const list = departments.value || []
       if (!searchQuery.value) {
-        return buildTree(list, null)
+        return buildTree(departments.value)
       }
-      const q = searchQuery.value.toLowerCase()
-      const filtered = list.filter(d => (d.name?.toLowerCase().includes(q)) || (d.code?.toLowerCase().includes(q)))
-      return buildTree(filtered, null)
+      const query = searchQuery.value.toLowerCase()
+      const filtered = departments.value.filter(dept => 
+        dept.name?.toLowerCase().includes(query) ||
+        dept.code?.toLowerCase().includes(query)
+      )
+      return buildTree(filtered)
     })
-
+    
     const loadDepartments = async () => {
       loading.value = true
       try {
         const res = await departmentApi.getAll()
-        if (res.data) departments.value = res.data
+        if (res.data) {
+          departments.value = res.data
+          // 默认展开所有有子部门的行
+          expandedRowKeys.value = getExpandedIds(departments.value)
+        }
       } catch (error) {
         console.error('获取部门列表失败:', error)
         ElMessage.error('获取部门列表失败')
@@ -197,21 +244,48 @@ export default {
         loading.value = false
       }
     }
-
+    
+    const handleExpandChange = (row, expanded) => {
+      const index = expandedRowKeys.value.indexOf(row.id)
+      if (expanded && index === -1) {
+        expandedRowKeys.value.push(row.id)
+      } else if (!expanded && index > -1) {
+        expandedRowKeys.value.splice(index, 1)
+      }
+    }
+    
     const openAddDialog = () => {
       isEdit.value = false
-      formData.value = { id: null, parentId: null, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 }
+      formData.value = {
+        id: null,
+        parentId: null,
+        name: '',
+        code: '',
+        leader: '',
+        phone: '',
+        sort: 0,
+        status: 1
+      }
       parentName.value = ''
       dialogVisible.value = true
     }
-
+    
     const addChild = (row) => {
       isEdit.value = false
-      formData.value = { id: null, parentId: row.id, name: '', code: '', leader: '', phone: '', sort: 0, status: 1 }
+      formData.value = {
+        id: null,
+        parentId: row.id,
+        name: '',
+        code: '',
+        leader: '',
+        phone: '',
+        sort: 0,
+        status: 1
+      }
       parentName.value = row.name
       dialogVisible.value = true
     }
-
+    
     const editDept = (dept) => {
       isEdit.value = true
       formData.value = { ...dept }
@@ -222,10 +296,15 @@ export default {
       }
       dialogVisible.value = true
     }
-
+    
     const deleteDept = async (dept) => {
       try {
-        await ElMessageBox.confirm(`确定要删除部门 "${dept.name}" 吗？此操作不可恢复。`, '删除确认', { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' })
+        await ElMessageBox.confirm(
+          `确定要删除部门 "${dept.name}" 吗？此操作不可恢复。`,
+          '删除确认',
+          { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+        )
+        
         await departmentApi.delete(dept.id)
         await loadDepartments()
         ElMessage.success('删除成功')
@@ -236,11 +315,13 @@ export default {
         }
       }
     }
-
+    
     const saveDept = async () => {
       if (!formRef.value) return
+      
       await formRef.value.validate(async (valid) => {
         if (!valid) return
+        
         saving.value = true
         try {
           if (isEdit.value) {
@@ -250,6 +331,7 @@ export default {
             await departmentApi.create(formData.value)
             ElMessage.success('创建成功')
           }
+          
           closeDialog()
           await loadDepartments()
         } catch (error) {
@@ -260,22 +342,148 @@ export default {
         }
       })
     }
-
-    const closeDialog = () => { dialogVisible.value = false }
-
+    
+    const closeDialog = () => {
+      dialogVisible.value = false
+    }
+    
     onMounted(loadDepartments)
-
+    
     return {
-      loading, saving, departments, searchQuery, filteredDepartments, dialogVisible, isEdit,
-      formRef, formData, rules, parentName, openAddDialog, addChild, editDept, deleteDept, saveDept, closeDialog,
-      OfficeBuilding, Plus, Search, Edit, Delete, treeProps
+      loading,
+      saving,
+      departments,
+      searchQuery,
+      filteredDepartments,
+      dialogVisible,
+      isEdit,
+      formRef,
+      formData,
+      rules,
+      parentName,
+      expandedRowKeys,
+      handleExpandChange,
+      openAddDialog,
+      addChild,
+      editDept,
+      deleteDept,
+      saveDept,
+      closeDialog,
+      OfficeBuilding,
+      Plus,
+      Search,
+      Edit,
+      Delete,
+      ArrowRight
     }
   }
 }
 </script>
 
 <style scoped>
-/* Minimal overrides - most styles now in global.css */
-.dept-table-wrapper { padding: 0; }
+.page-container {
+  animation: fadeIn 0.3s ease;
+}
 
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
+}
+
+.page-title .el-icon {
+  color: #409EFF;
+}
+
+.page-desc {
+  font-size: 14px;
+  color: #909399;
+  margin: 6px 0 0 0;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  max-width: 320px;
+}
+
+/* 树形表格样式 */
+.dept-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tree-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  color: #409EFF;
+  transition: transform 0.2s;
+}
+
+.tree-arrow .el-icon {
+  font-size: 14px;
+}
+
+.tree-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.dept-name-text {
+  color: #303133;
+  font-weight: 500;
+}
+
+.text-gray {
+  color: #cbd5e1;
+}
+
+.status-tag {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-tag.active {
+  background: #e8f5e9;
+  color: #67C23A;
+}
+
+.status-tag.inactive {
+  background: #ffebee;
+  color: #F56C6C;
+}
+
+.action-btns {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dept-form :deep(.el-form-item__label) {
+  font-weight: 500;
+}
 </style>
