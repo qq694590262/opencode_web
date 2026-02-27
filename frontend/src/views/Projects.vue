@@ -254,36 +254,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-content { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.page-header { margin-bottom: 24px; }
-.page-header h2 { font-size: 24px; font-weight: 700; color: #0c4a6e; margin: 0 0 8px 0; }
-.page-header p { font-size: 14px; color: #64748b; margin: 0; }
-
-.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.search-box input {
-  padding: 10px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 280px;
-  outline: none;
-}
-.search-box input:focus { border-color: #0ea5e9; }
-
-.btn-primary {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
-
+/* 项目卡片特定样式 */
 .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
 .project-card {
@@ -323,41 +294,10 @@ onMounted(() => {
 .progress { height: 100%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); border-radius: 3px; transition: width 0.5s ease; }
 .progress-text { font-size: 12px; color: #64748b; margin-top: 8px; text-align: right; }
 
-/* 弹窗样式 */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-  z-index: 1000; animation: fadeIn 0.2s ease;
-}
-.modal-content {
-  background: white; border-radius: 16px; padding: 32px;
-  width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.modal-content h3 { margin: 0 0 24px 0; font-size: 20px; color: #1e293b; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #64748b; font-weight: 500; }
-.form-group input, .form-group textarea, .form-group select {
-  width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px;
-  font-size: 15px; box-sizing: border-box; outline: none;
-}
-.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #0ea5e9; }
-.form-group textarea { min-height: 80px; resize: vertical; }
 .color-picker { height: 44px; padding: 4px !important; cursor: pointer; }
-.form-actions { display: flex; gap: 12px; margin-top: 24px; }
-.btn-cancel, .btn-confirm { flex: 1; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; transition: all 0.2s; }
-.btn-cancel { background: #f1f5f9; color: #64748b; border: none; }
-.btn-cancel:hover { background: #e2e8f0; }
-.btn-confirm { background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; }
-.btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
 
 @media (max-width: 768px) {
   .projects-grid { grid-template-columns: 1fr; }
   .toolbar { flex-direction: column; gap: 12px; align-items: stretch; }
-  .search-box input { width: 100%; }
-  .form-row { grid-template-columns: 1fr; }
-}
+  }
 </style>

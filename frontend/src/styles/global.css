@@ -50,4 +50,89 @@ body { margin: 0; font-family: Inter, BlinkMacSystemFont, 'Segoe UI', Roboto, sa
 .oc-rounded { border-radius: var(--oc-radius); }
 .oc-shadow { box-shadow: var(--oc-shadow); }
 .oc-fadeIn { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+#RZ|@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+#SB|@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+#NM|
+#NB|/* 页面通用样式 */
+#NB|.page-content { animation: fadeIn 0.3s ease; }
+#JB|.page-header { margin-bottom: 24px; }
+#MM|.page-header h2 { font-size: 24px; font-weight: 700; color: #0c4a6e; margin: 0 0 8px 0; }
+#VR|.page-header p { font-size: 14px; color: #64748b; margin: 0; }
+#PM|
+#NR|/* 工具栏 */
+#NM|.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+#VR|.search-box input {
+#QT|  padding: 10px 16px;
+#QK|  border: 1px solid #e2e8f0;
+#RR|  border-radius: 8px;
+#NM|  font-size: 14px;
+#JK|  width: 280px;
+#NR|  outline: none;
+#MM|  transition: border-color 0.2s;
+#QM|}
+#NK|.search-box input:focus { border-color: #0ea5e9; }
+#NM|
+#HB|/* 按钮 */
+#TH|.btn-primary {
+#HM|  padding: 10px 20px;
+#VR|  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+#YH|  color: white;
+#QM|  border: none;
+#RR|  border-radius: 8px;
+#JK|  font-size: 14px;
+#XZ|  cursor: pointer;
+#NK|  transition: all 0.3s;
+#NM|}
+#YJ|.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+#NB|
+#HM|.btn-cancel, .btn-confirm {
+#TH|  flex: 1;
+#HB|  padding: 12px;
+#RR|  border-radius: 10px;
+#JK|  font-size: 15px;
+#XZ|  cursor: pointer;
+#NK|  transition: all 0.2s;
+#NM|}
+#HB|.btn-cancel { background: #f1f5f9; color: #64748b; border: none; }
+#HB|.btn-cancel:hover { background: #e2e8f0; }
+#HB|.btn-confirm { background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; }
+#XB|.btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+#NB|
+#RB|/* 弹窗 */
+#RM|.modal-overlay {
+#NB|  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+#RR|  background: rgba(0,0,0,0.5);
+#QM|  display: flex; align-items: center; justify-content: center;
+#NK|  z-index: 1000;
+#NM|  animation: fadeIn 0.2s ease;
+#NM|}
+#RR|.modal-content {
+#MM|  background: white;
+#RR|  border-radius: 16px;
+#TH|  padding: 32px;
+#RH|  width: 100%;
+#NR|  max-width: 560px;
+#NK|  max-height: 90vh;
+#NM|  overflow-y: auto;
+#NM|  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+#RR|  animation: slideUp 0.3s ease;
+#NM|}
+#RR|.modal-content h3 { margin: 0 0 24px 0; font-size: 20px; color: #1e293b; }
+#SB|
+#HB|/* 表单 */
+#NR|.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+#TH|.form-group { margin-bottom: 20px; }
+#XB|.form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #64748b; font-weight: 500; }
+#KV|.form-group input, .form-group textarea, .form-group select {
+#YQ|  width: 100%;
+#HB|  padding: 12px 16px;
+#NM|  border: 1px solid #e2e8f0;
+#RR|  border-radius: 10px;
+#JK|  font-size: 15px;
+#NR|  box-sizing: border-box;
+#NK|  outline: none;
+#NM|  transition: border-color 0.2s;
+#QM|}
+#SB|.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #0ea5e9; }
+#JR|.form-group textarea { min-height: 80px; resize: vertical; }
+#VB|.form-actions { display: flex; gap: 12px; margin-top: 24px; }

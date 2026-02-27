@@ -202,19 +202,7 @@ export default {
 </script>
 
 <style scoped>
-.page-content { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.page-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-.page-header h2 { font-size: 24px; font-weight: 700; color: #0c4a6e; margin: 0; }
-.page-header p { font-size: 14px; color: #64748b; margin: 8px 0 0 0; }
-
-.toolbar { display: flex; gap: 16px; margin-bottom: 20px; }
-.search-input { flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; }
-.search-input:focus { border-color: #0ea5e9; }
-
-.btn-primary { padding: 12px 24px; border: none; border-radius: 10px; background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; }
-
+/* 文档卡片特定样式 */
 .docs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
 .doc-card {
@@ -235,89 +223,15 @@ export default {
 .btn-delete { padding: 8px 12px; border: none; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 13px; cursor: pointer; transition: all 0.2s; }
 .btn-delete:hover { background: #dc2626; color: white; }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
+/* 搜索框 */
+.search-input { flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; }
+.search-input:focus { border-color: #0ea5e9; }
 
-.modal {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-.modal h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  color: #1e293b;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #0ea5e9;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.btn-cancel {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: #f1f5f9;
-  color: #475569;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.btn-confirm {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-}
+/* 弹窗调整 */
+.modal { background: #fff; border-radius: 16px; padding: 24px; width: 500px; max-width: 90%; max-height: 85vh; overflow-y: auto; }
+.modal h3 { margin: 0 0 20px 0; font-size: 18px; color: #1e293b; }
 
 @media (max-width: 1024px) { .docs-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .docs-grid { grid-template-columns: 1fr; } }
 </style>
+
