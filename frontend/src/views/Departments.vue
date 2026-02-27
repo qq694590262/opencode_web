@@ -277,5 +277,5 @@ export default {
 <style scoped>
 /* Minimal overrides - most styles now in global.css */
 .dept-table-wrapper { padding: 0; }
-</style>
+
 </style>
