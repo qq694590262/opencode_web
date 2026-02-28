@@ -13,7 +13,7 @@
         <div class="brand-content">
           <div class="logo-wrap">
             <el-icon class="logo-icon"><DataBoard /></el-icon>
-            <span class="logo-text">OpenCode</span>
+            <span class="logo-text">全自动化</span>
           </div>
           <h1 class="brand-title">企业管理系统</h1>
           <p class="brand-desc">高效 · 智能 · 便捷</p>
